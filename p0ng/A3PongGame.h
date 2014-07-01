@@ -57,8 +57,8 @@ typedef struct
 
 @interface A3PongGame : NSObject
 {
-    NSInteger _playerScore;
-    NSInteger _opponentScore;
+    int _playerScore;
+    int _opponentScore;
     float _randomAILag;
     NSTimer *_timer;
     CGFloat _scale;
@@ -70,19 +70,19 @@ typedef struct
 @property BOOL opponentIsComputer;
 
 @property CGPoint ballVelocity;
-@property NSInteger state;
+@property int state;
 @property unsigned long interval;
 @property BOOL playerTurn;
 @property id<A3PongGameProtocol> delegate;
-@property NSInteger syncState;
+@property int syncState;
 
 + (A3PongGame *) sharedInstance;
 
-- (void) setPlayerScore: (NSInteger) value;
-- (void) setOpponentScore: (NSInteger) value;
+- (void) setPlayerScore: (int) value;
+- (void) setOpponentScore: (int) value;
 - (void) broadcast: (BOOL) ack;
-- (NSInteger) playerScore;
-- (NSInteger) opponentScore;
+- (int) playerScore;
+- (int) opponentScore;
 - (void) updatePlayerScore: (UILabel *)label;
 - (void) updateOpponentScore: (UILabel *)label;
 - (void) updateForBall: (UIView *) ball andPaddle: (UIView *) playerPaddle andOpponent: (UIView *) opponentPaddle;

@@ -29,9 +29,9 @@
         _paddleB.center = CGPointFromString([def stringForKey:@"p0ngPaddleB"]);
     
         
-        _playerScore.text = [NSString stringWithFormat:@"%i", [A3PongGame sharedInstance].playerScore];
+        _playerScore.text = [NSString stringWithFormat:@"%ld", (long)[A3PongGame sharedInstance].playerScore];
         
-        _opponentScore.text = [NSString stringWithFormat:@"%i", [A3PongGame sharedInstance].opponentScore];
+        _opponentScore.text = [NSString stringWithFormat:@"%ld", (long)[A3PongGame sharedInstance].opponentScore];
     }
     
     [def removeObjectForKey:@"p0ngBall"];
@@ -60,6 +60,7 @@
     _scoreA.font = _scoreB.font = [UIFont fontWithName:@"kongtext" size:24];
     
     _lblStatus.font = [UIFont fontWithName:@"kongtext" size:30];
+    
     _btnBack.titleLabel.font = [UIFont fontWithName:@"kongtext" size:16];
     
     if([A3PongSettings sharedInstance].playerOnLeft) {
@@ -135,10 +136,6 @@
     
     [self save];
     
-    //A3MenuViewController *menu = [[A3MenuViewController alloc] initWithNibName:@"A3MenuViewController" bundle:nil];
-    
-    //[A3AppDelegate loadViewController:menu];
-    
     [self.appDelegate popViewControllerAnimated:YES];
 }
 
@@ -155,7 +152,6 @@
     
     if ([A3PongSettings sharedInstance].playerOnLeft ? (location.x < 25) : (location.x > 400)) {
         CGPoint yLocation = CGPointMake(_playerPaddle.center.x, location.y);
-        
         
         if(yLocation.y - (_playerPaddle.frame.size.height/2) > 25 && yLocation.y + (_playerPaddle.frame.size.height/2)
                 < [UIScreen mainScreen].bounds.size.width-25)
@@ -211,8 +207,6 @@
     _playerScore.text = [NSString stringWithFormat:@"%i", game.playerScore];
     
     _opponentScore.text = [NSString stringWithFormat:@"%i", game.opponentScore];
-    
-    //NSLog(@"Updated UI from data: ball: %@ paddle: %@", NSStringFromCGPoint(_ball.center), NSStringFromCGPoint(_opponentPaddle.center));
 }
 
 - (void) updateStatus: (NSString*) status
@@ -238,24 +232,8 @@
     {
         _lblStatus.hidden = YES;
 
-        //if (game.interval % [A3PongSettings sharedInstance].speed != 0) return;
-        
         if(game.syncState != kGameSyncNone)
         {
-            /*if(game.interval % [A3PongSettings sharedInstance].speedInterval != 0) {
-            if(game.syncState == kGameSyncSendingAck)
-            {
-                NSLog(@"resending ack request");
-                
-                [game sendPacket:kPacketAck];
-                
-                game.syncState = kGameSyncNone;
-            }
-            else if(game.syncState == kGameSyncWaitingForAck) {
-                [game sendPacket:kPacketSendAndAck];
-                NSLog(@"Resending ack request");
-            }
-            }*/
             NSLog(@"SYNC STATE: %d", game.syncState);
             return;
         }
@@ -283,13 +261,6 @@
         
         if(game.syncState != kGameSyncNone)
         {
-            /*if(game.syncState == kGameSyncWaitingForAck) {
-                NSLog(@"PREGAME SYNC STATE: %d", game.syncState);
-                [game sendPacket: kPacketSendAndAck];
-            } else if(game.syncState == kGameSyncSendingAck) {
-                [game sendPacket:kPacketAck];
-                game.syncState = kGameSyncNone;
-            }*/
             NSLog(@"SYNC STATE: %d", game.syncState);
             return;
         }
@@ -330,82 +301,4 @@
 
 }
 
-/*- (void) gameLoop
-{
-    if(_gameState == kGameStateRunning) {
- 
-        _playerScore.hidden = YES;
-        _opponentScore.hidden = YES;
- 
-        _winLoseLabel.hidden = YES;
- 
-        _ball.center = CGPointMake(_ball.center.x + velocity.x , _ball.center.y + velocity.y);
-        
-        if(_ball.center.x > self.view.bounds.size.width || _ball.center.x < 0) {
-            velocity.x = -velocity.x;
-        }
-        
-        if(_ball.center.y > self.view.bounds.size.height || _ball.center.y < 0) {
-            velocity.y = -velocity.y;
-        }
-        
-        if (CGRectIntersectsRect (_ball.frame, _playerPaddle.frame)) {
-            CGRect frame = _ball.frame;
-            frame.origin.x = _playerPaddle.frame.origin.x - frame.size.height;
-            _ball.frame = frame;
-            velocity.x = -velocity.x;
-        }
-        
-        if (CGRectIntersectsRect (_ball.frame, _opponentPaddle.frame)) {
-            CGRect frame = _ball.frame;
-            frame.origin.x = CGRectGetMaxX(_opponentPaddle.frame);
-            _ball.frame = frame;
-            velocity.x = -velocity.x;
-        }
-        
-        // Begin Simple AI
-        if(_ball.center.x <= self.view.center.x) {
-            if(_ball.center.y < _opponentPaddle.center.y) {
-                CGPoint compLocation = CGPointMake(_opponentPaddle.center.x, _opponentPaddle.center.y - kComputerMoveSpeed);
-                _opponentPaddle.center = compLocation;
-            }
-            
-            if(_ball.center.y > _opponentPaddle.center.y) {
-                CGPoint compLocation = CGPointMake(_opponentPaddle.center.x, _opponentPaddle.center.y + kComputerMoveSpeed);
-                _opponentPaddle.center = compLocation;
-            }
-        }
-        
-        // Begin Scoring Game Logic
-        if(_ball.center.x <= 0) {
-            _playerScoreValue++;
-            [self reset:(_playerScoreValue >= kScoreToWin)];
-        }
-        
-        if(_ball.center.x > self.view.bounds.size.width) {
-            _opponentScoreValue++;
-            [self reset:(_opponentScoreValue >= kScoreToWin)];
-        }
-    }
-}
-
--(void)reset:(BOOL) newGame {
-    _state = kGameStatePaused;
-    
-    _ball.center = CGPointMake(241, 159);
-    
-    _playerScore.hidden = NO;
-    _opponentScore.hidden = NO;
-    
-    _playerScore.text = [NSString stringWithFormat:@"%d", _playerScoreValue];
-    _opponentScore.text = [NSString stringWithFormat:@"%d",_opponentScoreValue];
-    
-    if(newGame) {
-        _winLoseLabel.hidden = NO;
-                
-        _opponentScoreValue = 0;
-        _playerScoreValue = 0;
-    }
-}
-*/
 @end

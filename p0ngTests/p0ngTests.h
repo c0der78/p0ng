@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 arg3 software. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
-@interface p0ngTests : SenTestCase
+@interface p0ngTests : XCTestCase
 
 @end

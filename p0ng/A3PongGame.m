@@ -53,13 +53,12 @@ static A3PongGame *sharedGame = nil;
         _speedBonus = CGPointZero;
         
         NSURL *soundPath =  [[NSBundle mainBundle] URLForResource:@"offthepaddle" withExtension:@"wav"];
-        //AudioServicesCreateSystemSoundID((__bridge CFURLRef)[NSURL fileURLWithPath: soundPath], &_sndPaddle);
         
         _sndPaddle = [[AVAudioPlayer alloc]
                    initWithContentsOfURL:soundPath error:nil];
         
         soundPath = [[NSBundle mainBundle] URLForResource: @"offthewall" withExtension: @"wav"];
-        //AudioServicesCreateSystemSoundID((__bridge CFURLRef)[NSURL fileURLWithPath: soundPath], &_sndWall);
+        
         _sndWall = [[AVAudioPlayer alloc]
                    initWithContentsOfURL:soundPath error:nil];
         
@@ -75,7 +74,7 @@ static A3PongGame *sharedGame = nil;
 - (void) calcSpeedBonus: (UIView *) ball andPaddle: (UIView *) paddle margin: (float) margin {
     if(ball.center.y - paddle.frame.origin.y <= margin || (paddle.frame.origin.y+paddle.frame.size.height) - ball.center.y <= margin) {
         _speedBonus = CGPointMake(1.1, 1.2);
-        NSLog(@"Speed BOnus!");
+        NSLog(@"Speed Bonus!");
     }
     else
         _speedBonus = CGPointZero;
@@ -108,22 +107,16 @@ static A3PongGame *sharedGame = nil;
     
     p0ngPacket packet;
     
-    /*if(!ack && _state != _lastState && [A3GameCenter sharedInstance].isHosting)
-     ack = YES;*/
-    
     packet.type = state;
 
     if([UIDevice currentResolution] == UIDevice_iPhoneTallerHiRes)
         packet.ballX = ballPos.x / (1136.0/960.0);
     else
         packet.ballX = ballPos.x;
+    
     packet.ballY = ballPos.y;
+    
     packet.paddleY = [_delegate getPlayerPosition].y;
-    /*packet.playerScore = _playerScore;
-     packet.opponentScore = _opponentScore;
-     packet.state = _lastState = _state;
-     packet.hostingTurn = _playerTurn;
-     packet.hostingSide = [A3PongSettings sharedInstance].playerOnLeft;*/
     
     packet.stateAndScores = (_state << 16) | (_playerScore << 8) | _opponentScore;
     
@@ -147,9 +140,8 @@ static A3PongGame *sharedGame = nil;
     if(_opponentIsComputer)
         return;
     
-    if(_state > kGameStatePaused && (ack || ![A3PongSettings sharedInstance].lagReduction || _interval%2 == 0))
+    if(_state > kGameStatePaused && (ack /*|| ![A3PongSettings sharedInstance].lagReduction || _interval % 2 == 0*/))
     {
-        
         if(ack)
         {
             if(_syncState == kGameSyncHasToAck)
@@ -169,15 +161,7 @@ static A3PongGame *sharedGame = nil;
             NSLog(@"SEND %ld", _interval);
             [self sendPacket:_syncState == kGameSyncWaitingForAck ? kPacketSendAndAck : kPacketSend];
         }
-        
-        //NSLog(@"SEND %@ %ld", ack ? @"ACK" : @"", _interval);
-        //NSLog(@"SEND %ld %@ (%@ scale %.1f)", _interval, NSStringFromCGPoint(ballPos), NSStringFromCGSize(screenSize), _scale);
     }
-    /*else if(_waitForAck != kGameStateDisconnected && _interval % 200 == 0) {
-     [self sendPacket: NO];
-     NSLog(@"Resending ack request");
-     
-     }*/
 }
 
 - (void) gotPacket:(p0ngPacket *)packet
@@ -204,8 +188,9 @@ static A3PongGame *sharedGame = nil;
     if(_syncState == kGameSyncWaitingForAck)
     {
         NSLog(@"Updated state from opponent");
+        
         _syncState = kGameSyncNone;
-        //[_game.delegate updateGame:_game withBall: ballLocation andOpponent:packet.paddleY];
+        
         NSLog(@"GOT ACK %ld", _interval);
         
         char opponentScore = packet->stateAndScores & 0xff;
@@ -246,8 +231,6 @@ static A3PongGame *sharedGame = nil;
             ballLocation = CGPointMake([UIScreen mainScreen].bounds.size.height - packet->ballX, packet->ballY);
         }
         
-        //NSLog(@"data update: %@ (%@ scale %.1f)", NSStringFromCGPoint(ballLocation), NSStringFromCGSize([UIScreen mainScreen].bounds.size), _scale);
-        
         [_delegate updateGame: self withBall:ballLocation];
         
         if(_state == kGameStateOver)
@@ -258,9 +241,6 @@ static A3PongGame *sharedGame = nil;
     
 }
 - (void) updateForBall: (UIView *) ball andPaddle: (UIView *) playerPaddle andOpponent: (UIView *) opponentPaddle {
-    
-    /*if (!_opponentIsComputer && ![A3GameCenter sharedInstance].isHosting)
-        return;*/
     
     if(_state != kGameStateRunning || _syncState != kGameSyncNone)
         return;
@@ -289,7 +269,7 @@ static A3PongGame *sharedGame = nil;
 
     }
     
-    else if (CGRectIntersectsRect (ball.frame, opponentPaddle.frame)) {
+    else if (_opponentIsComputer && CGRectIntersectsRect (ball.frame, opponentPaddle.frame)) {
         CGRect frame = ball.frame;
         if([A3PongSettings sharedInstance].difficulty > kAIEasy)
             [self calcSpeedBonus:ball andPaddle:opponentPaddle margin: 0];
@@ -298,9 +278,12 @@ static A3PongGame *sharedGame = nil;
         
         frame.origin.x = [A3PongSettings sharedInstance].playerOnLeft ? (opponentPaddle.frame.origin.x - frame.size.height) : CGRectGetMaxX(opponentPaddle.frame);
         ball.frame = frame;
+        
         _ballVelocity.x = -_ballVelocity.x;
+        
         if([A3PongSettings sharedInstance].playSounds)
            [_sndPaddle play];
+        
         [self broadcast:YES];
     }
     
@@ -317,7 +300,6 @@ static A3PongGame *sharedGame = nil;
         {
             float speed = [A3PongSettings sharedInstance].difficultyValue;
         
-            //if([A3PongSettings sharedInstance].difficulty == kAIEasy) {
             float percent;
             
             switch([A3PongSettings sharedInstance].difficulty)
@@ -332,12 +314,11 @@ static A3PongGame *sharedGame = nil;
                     percent = 100;
                     break;
             }
-                if(percent < 20) {
-                    NSLog(@"Random lag!");
-                    _randomAILag = _interval + [A3PongSettings sharedInstance].difficulty+1;
-                }
-            //}
-        
+            
+            if(percent < 20) {
+                NSLog(@"Random lag!");
+                _randomAILag = _interval + [A3PongSettings sharedInstance].difficulty+1;
+            }
             
             if(ball.center.y < opponentPaddle.center.y) {
                 CGPoint compLocation = CGPointMake(opponentPaddle.center.x, opponentPaddle.center.y - speed);
@@ -403,7 +384,7 @@ static A3PongGame *sharedGame = nil;
 
 }
 
-- (void) setPlayerScore:(NSInteger)value {
+- (void) setPlayerScore:(int)value {
     _playerScore = value;
     
     if(_playerScore >= [A3PongSettings sharedInstance].gamePoint) {
@@ -411,7 +392,7 @@ static A3PongGame *sharedGame = nil;
     }
 }
 
-- (void) setOpponentScore:(NSInteger)value {
+- (void) setOpponentScore:(int)value {
     _opponentScore = value;
     
     if(_opponentScore >= [A3PongSettings sharedInstance].gamePoint) {
@@ -419,11 +400,11 @@ static A3PongGame *sharedGame = nil;
     }
 }
 
-- (NSInteger) playerScore {
+- (int) playerScore {
     return _playerScore;
 }
 
-- (NSInteger) opponentScore {
+- (int) opponentScore {
     return _opponentScore;
 }
 
@@ -453,8 +434,7 @@ static A3PongGame *sharedGame = nil;
 
 -(void) gameLoop: (NSTimer *) timer {
     
-    if(_state > kGameStatePaused && _state != kGameStateOver /*&&
-        (_opponentIsComputer || [A3GameCenter sharedInstance].isHosting)*/) {
+    if(_state > kGameStatePaused && _state != kGameStateOver) {
  
         _interval++;
         
