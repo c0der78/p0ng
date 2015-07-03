@@ -42,9 +42,7 @@ class OptionsController : BaseController
     }
 
     @IBAction func goBack(selected: AnyObject) {
-        if (self.appDelegate != nil) {
-            self.appDelegate!.popViewControllerAnimated(true);
-        }
+        self.appDelegate?.popViewControllerAnimated(true);
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -52,31 +50,31 @@ class OptionsController : BaseController
     
         let settings = Settings.sharedInstance;
     
-        if (self.segAiDifficulty != nil) {
-            let difficulty = GameDifficulty(rawValue: self.segAiDifficulty!.selectedSegmentIndex);
+        if let value = self.segAiDifficulty?.selectedSegmentIndex {
+            let difficulty = GameDifficulty(rawValue: value);
             
             if (difficulty != nil) {
                 settings.difficulty = difficulty!;
             }
         }
-        if (self.segBallSpeed != nil) {
-            let speed = GameSpeed(rawValue: self.segBallSpeed!.selectedSegmentIndex);
+        if let value = self.segBallSpeed?.selectedSegmentIndex {
+            let speed = GameSpeed(rawValue: value);
             
             if (speed != nil) {
                 settings.speedIndex = speed!;
             }
         }
     
-        if (self.switchSounds != nil) {
-            settings.playSounds = self.switchSounds!.on;
+        if let value = self.switchSounds?.on {
+            settings.playSounds = value;
         }
     
-        if (self.segGamePoint != nil) {
-            settings.gamePointIndex = self.segGamePoint!.selectedSegmentIndex;
+        if let value = self.segGamePoint?.selectedSegmentIndex {
+            settings.gamePointIndex = value;
         }
     
-        if (self.segPlayerPosition != nil) {
-            let left = (self.segPlayerPosition!.selectedSegmentIndex == 0);
+        if let value = self.segPlayerPosition?.selectedSegmentIndex {
+            let left = (value == 0);
         
             if(left != settings.playerOnLeft) {
                 Game.sharedInstance.gameOver(true);
@@ -85,16 +83,16 @@ class OptionsController : BaseController
             settings.playerOnLeft = left;
         }
     
-        if (self.matchGamePoint != nil) {
-            settings.matchGamePoint = self.matchGamePoint!.on;
+        if let value = self.matchGamePoint?.on {
+            settings.matchGamePoint = value;
         }
     
-        if (self.matchSpeed != nil) {
-            settings.matchSpeeds = self.matchSpeed!.on;
+        if let value = self.matchSpeed?.on {
+            settings.matchSpeeds = value;
         }
     
-        if (self.segNetwork != nil) {
-            settings.lagReduction = self.segNetwork!.selectedSegmentIndex == 0;
+        if let value = self.segNetwork?.selectedSegmentIndex {
+            settings.lagReduction = (value == 0);
         }
     
         settings.save();
@@ -134,47 +132,29 @@ class OptionsController : BaseController
     
         let backItem = UIBarButtonItem(image: UIImage(named:"leftarrow.white.png"), style:UIBarButtonItemStyle.Plain, target:self, action:Selector("goBack:"));
     
-        if (self.navItem != nil) {
-            self.navItem!.leftBarButtonItem = backItem;
-        }
+        self.navItem?.leftBarButtonItem = backItem;
     
         let settings = Settings.sharedInstance;
     
-        if (self.segAiDifficulty != nil) {
-            self.segAiDifficulty!.selectedSegmentIndex = settings.difficulty.rawValue;
-        }
+        self.segAiDifficulty?.selectedSegmentIndex = settings.difficulty.rawValue;
         
-        if (self.segBallSpeed != nil) {
-            self.segBallSpeed!.selectedSegmentIndex = settings.speedIndex.rawValue;
-        }
+        self.segBallSpeed?.selectedSegmentIndex = settings.speedIndex.rawValue;
         
-        if (self.segPlayerPosition != nil) {
-            self.segPlayerPosition!.selectedSegmentIndex = settings.playerOnLeft ? 0 : 1;
-        }
+        self.segPlayerPosition?.selectedSegmentIndex = settings.playerOnLeft ? 0 : 1;
         
-        if (self.segGamePoint != nil) {
-            self.segGamePoint!.selectedSegmentIndex = settings.gamePointIndex;
-        }
-    
-        if (self.segNetwork != nil) {
-            self.segNetwork!.selectedSegmentIndex = settings.lagReduction ? 0 : 1;
-        }
-    
-        if (self.matchGamePoint != nil) {
-            self.matchGamePoint!.on = settings.matchGamePoint;
-        }
-    
-        if (self.matchSpeed != nil) {
-            self.matchSpeed!.on = settings.matchSpeeds;
-        }
-    
-        if (self.switchSounds != nil) {
-            self.switchSounds!.on = settings.playSounds;
-        }
-    
-        if (self.scrollView != nil && self.contentView != nil) {
-            self.scrollView!.contentSize = self.contentView!.bounds.size;
-            self.scrollView!.addSubview(self.contentView!);
+        self.segGamePoint?.selectedSegmentIndex = settings.gamePointIndex;
+        
+        self.segNetwork?.selectedSegmentIndex = settings.lagReduction ? 0 : 1;
+        
+        self.matchGamePoint?.on = settings.matchGamePoint;
+        
+        self.matchSpeed?.on = settings.matchSpeeds;
+        
+        self.switchSounds?.on = settings.playSounds;
+        
+        if let content = self.contentView {
+            self.scrollView?.contentSize = content.bounds.size;
+            self.scrollView?.addSubview(content);
         }
     
     }

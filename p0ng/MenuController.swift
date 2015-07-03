@@ -17,7 +17,6 @@ class MenuController : BaseController, GameCenterProtocol, UIAlertViewDelegate
     @IBOutlet var btnSettings: UIButton?;
     @IBOutlet var btnContinue: UIButton?;
 
-    
     override init(delegate: AppDelegate?, nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?)
     {
         super.init(delegate: delegate, nibName: nibNameOrNil, bundle: nibBundleOrNil);
@@ -35,25 +34,17 @@ class MenuController : BaseController, GameCenterProtocol, UIAlertViewDelegate
         
         var font = UIFont(name:"kongtext", size:64);
         
-        if (font != nil && self.lblHeader != nil) {
-            self.lblHeader!.font = font!;
+        if (font != nil) {
+            self.lblHeader?.font = font!;
         }
         
         font = UIFont(name:"kongtext", size:20);
         
         if (font != nil) {
-            if (self.btnPlayComputer != nil && self.btnPlayComputer!.titleLabel != nil) {
-                self.btnPlayComputer!.titleLabel!.font = font!;
-            }
-            if (self.btnPlayOnline != nil && self.btnPlayOnline!.titleLabel != nil) {
-                self.btnPlayOnline!.titleLabel!.font = font!;
-            }
-            if (self.btnSettings != nil && self.btnSettings!.titleLabel != nil) {
-                self.btnSettings!.titleLabel!.font = font!;
-            }
-            if (self.btnContinue != nil && self.btnContinue!.titleLabel != nil) {
-                self.btnContinue!.titleLabel!.font = font!;
-            }
+            self.btnPlayComputer?.titleLabel?.font = font!;
+            self.btnPlayOnline?.titleLabel?.font = font!;
+            self.btnSettings?.titleLabel?.font = font!;
+            self.btnContinue?.titleLabel?.font = font!;
         }
         
     }
@@ -61,12 +52,10 @@ class MenuController : BaseController, GameCenterProtocol, UIAlertViewDelegate
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated);
     
-        if (self.btnContinue != nil) {
-            if(Game.sharedInstance.state == GameState.Paused) {
-                self.btnContinue!.hidden = false;
-            } else {
-                self.btnContinue!.hidden = true;
-            }
+        if(Game.sharedInstance.state == GameState.Paused) {
+            self.btnContinue?.hidden = false;
+        } else {
+            self.btnContinue?.hidden = true;
         }
     }
     
@@ -88,9 +77,7 @@ class MenuController : BaseController, GameCenterProtocol, UIAlertViewDelegate
     
         let viewController = GameController(delegate: self.appDelegate, nibName:"GameController", bundle:nil);
     
-        if (self.appDelegate != nil) {
-            self.appDelegate!.pushViewController(viewController, animated:true);
-        }
+        self.appDelegate?.pushViewController(viewController, animated:true);
         
         Game.sharedInstance.newGame(true);
     }
@@ -98,9 +85,7 @@ class MenuController : BaseController, GameCenterProtocol, UIAlertViewDelegate
     @IBAction func continueGame(sender: AnyObject) {
         let viewController = GameController(delegate: self.appDelegate, nibName:"GameController", bundle:nil);
     
-        if (self.appDelegate != nil) {
-            self.appDelegate!.pushViewController(viewController, animated:true);
-        }
+        self.appDelegate?.pushViewController(viewController, animated:true);
     
         Game.sharedInstance.state = GameState.Countdown1;
     }
@@ -116,27 +101,20 @@ class MenuController : BaseController, GameCenterProtocol, UIAlertViewDelegate
         
         Game.sharedInstance.state = GameState.Disconnected;
         
-        if (self.appDelegate != nil) {
-            GameCenter.sharedInstance.authenticateLocalUser(self.appDelegate!, gameCenterDelegate: self);
-        }
-        
+        GameCenter.sharedInstance.authenticateLocalUser(self.appDelegate, gameCenterDelegate: self);
     }
     
     func matchFound(gameCenter: GameCenter) {
-        if (self.appDelegate != nil ) {
-            let viewController = GameController(delegate: self.appDelegate, nibName:"GameController", bundle:nil);
+        let viewController = GameController(delegate: self.appDelegate, nibName:"GameController", bundle:nil);
     
-            self.appDelegate!.pushViewController(viewController, animated:true);
-        }
+        self.appDelegate?.pushViewController(viewController, animated:true);
     }
     
     @IBAction func showSettings(sender: AnyObject) {
     
-        if (self.appDelegate != nil) {
-            let viewController = OptionsController(delegate: self.appDelegate, nibName:"OptionsController", bundle:nil);
+        let viewController = OptionsController(delegate: self.appDelegate, nibName:"OptionsController", bundle:nil);
     
-            self.appDelegate!.pushViewController(viewController, animated:true);
-        }
+        self.appDelegate?.pushViewController(viewController, animated:true);
     }
 
 }

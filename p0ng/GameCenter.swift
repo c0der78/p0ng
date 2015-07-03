@@ -36,8 +36,6 @@ struct GameCenterFlags
     var userAuthenticated: Bool;
     var matchStarted: Bool;
     var delegate: GameCenterProtocol?;
-    
-
     var presentingViewController: UIViewController?;
     var match: GKMatch?;
     
@@ -72,9 +70,7 @@ struct GameCenterFlags
     
     func disconnect() {
 
-        if(self.match == nil) { return; }
-    
-        self.match!.disconnect();
+        self.match?.disconnect();
     
     }
     
@@ -126,33 +122,28 @@ struct GameCenterFlags
         self.match = nil;
         self.presentingViewController = viewController;
             
-        if (self.presentingViewController != nil) {
-           self.presentingViewController!.dismissViewControllerAnimated(false, completion:nil);
-        }
+        self.presentingViewController?.dismissViewControllerAnimated(false, completion:nil);
         
         let request = GKMatchRequest();
         request.minPlayers = 2;
         request.maxPlayers = 2;
         request.playerGroup = self.playerGroup;
         
-        let mmvc:GKMatchmakerViewController! = GKMatchmakerViewController(matchRequest:request);
-        
-        mmvc.matchmakerDelegate = self;
-        mmvc.modalPresentationStyle = UIModalPresentationStyle.FullScreen;
-        
-        NSLog("Finding match on game center...");
-        
-        if (self.presentingViewController != nil) {
-            self.presentingViewController!.presentViewController(mmvc, animated:true, completion:nil);
+        if let mmvc = GKMatchmakerViewController(matchRequest:request) {
+            
+            mmvc.matchmakerDelegate = self;
+            mmvc.modalPresentationStyle = UIModalPresentationStyle.FullScreen;
+            
+            NSLog("Finding match on game center...");
+            
+            self.presentingViewController?.presentViewController(mmvc, animated:true, completion:nil);
         }
     }
     
     
     // The user has cancelled matchmaking
     func matchmakerViewControllerWasCancelled(viewController: GKMatchmakerViewController) {
-        if (self.presentingViewController != nil) {
-            self.presentingViewController!.dismissViewControllerAnimated(true, completion:nil);
-        }
+        self.presentingViewController?.dismissViewControllerAnimated(true, completion:nil);
         NSLog("Match was cancelled");
         self.isHosting = false;
         self.matchStarted = false;
@@ -178,15 +169,12 @@ struct GameCenterFlags
         
             let player = GKLocalPlayer.localPlayer();
             
-            if (player.playerID != nil) {
-                self.isHosting = player.playerID == theMatch.playerIDs[0];
-            }
+            self.isHosting = player.playerID == theMatch.playerIDs[0];
+            
             NSLog("is Hosting? = %@", self.isHosting ? "YES" : "NO");
             self.matchStarted = true;
         
-            if (self.delegate != nil) {
-                self.delegate!.matchFound(self);
-            }
+            self.delegate?.matchFound(self);
         
             Game.sharedInstance.newGame(false);
         }
@@ -226,14 +214,11 @@ struct GameCenterFlags
                 
                 let player = GKLocalPlayer.localPlayer();
             
-                if(player.playerID != nil) {
-                    self.isHosting = player.playerID == theMatch.playerIDs[0];
-                }
+                self.isHosting = player.playerID == theMatch.playerIDs[0];
+                
                 self.matchStarted = true;
             
-                if (self.delegate != nil) {
-                    self.delegate!.matchFound(self);
-                }
+                self.delegate?.matchFound(self);
             
                 Game.sharedInstance.newGame(false);
             } else {
@@ -260,6 +245,7 @@ struct GameCenterFlags
         if (self.match != theMatch) { return; }
         
         self.matchStarted = false;
+        
         Game.sharedInstance.gameOver(true);
     }
     
@@ -278,35 +264,30 @@ struct GameCenterFlags
     }
     
     func sendData(data: NSData)  {
-    
-        if (self.match != nil) {
-            do {
-                try self.match!.sendDataToAllPlayers(data, withDataMode:GKMatchSendDataMode.Unreliable);
-            }
-            catch let error as NSError {
-                NSLog("%@", error);
-            }
+        do {
+            try self.match?.sendDataToAllPlayers(data, withDataMode:GKMatchSendDataMode.Unreliable);
+        }
+        catch let error as NSError {
+            NSLog("%@", error);
         }
     }
     
     func sendReliableData(data: NSData)  {
-        if (self.match != nil) {
-            do {
-                try self.match!.sendDataToAllPlayers(data, withDataMode: GKMatchSendDataMode.Reliable);
-            }
-            catch let error as NSError {
-                NSLog("%@", error);
-            }
+        do {
+            try self.match?.sendDataToAllPlayers(data, withDataMode: GKMatchSendDataMode.Reliable);
+        }
+        catch let error as NSError {
+            NSLog("%@", error);
         }
     }
     
-    func authenticateLocalUser(appDelegate: AppDelegate, gameCenterDelegate: GameCenterProtocol)  {
+    func authenticateLocalUser(appDelegate: AppDelegate?, gameCenterDelegate: GameCenterProtocol)  {
         
         self.delegate = gameCenterDelegate;
         
         if(self.userAuthenticated)
         {
-            self.findMatchWithViewController(appDelegate.window!.rootViewController);
+            self.findMatchWithViewController(appDelegate?.window?.rootViewController);
             return;
         }
         
@@ -316,13 +297,14 @@ struct GameCenterFlags
                 NSLog("authenticateLocalUser: %@", error!);
             }
             
-            if (appDelegate.window!.rootViewController != nil && viewcontroller != nil) {
-                appDelegate.window!.rootViewController!.presentViewController(viewcontroller!, animated:true, completion:nil);
+            if (viewcontroller != nil) {
+                appDelegate?.window?.rootViewController?.presentViewController(viewcontroller!, animated:true, completion:nil);
             }
+                
             else if (GKLocalPlayer.localPlayer().authenticated)
             {
                 self.userAuthenticated = true;
-                self.findMatchWithViewController(appDelegate.window!.rootViewController);
+                self.findMatchWithViewController(appDelegate?.window?.rootViewController);
             }
         };
         

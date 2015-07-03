@@ -31,7 +31,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "410"
             endingLineNumber = "410"
-            landmarkName = "updateForBall(_:andPaddle:andOpponent:)"
+            landmarkName = "update(_:playerPaddle:opponentPaddle:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -47,7 +47,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "414"
             endingLineNumber = "414"
-            landmarkName = "updateForBall(_:andPaddle:andOpponent:)"
+            landmarkName = "update(_:playerPaddle:opponentPaddle:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -63,7 +63,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "422"
             endingLineNumber = "422"
-            landmarkName = "updateForBall(_:andPaddle:andOpponent:)"
+            landmarkName = "update(_:playerPaddle:opponentPaddle:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

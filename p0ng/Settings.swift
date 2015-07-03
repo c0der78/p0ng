@@ -12,7 +12,7 @@ import Foundation
 {
     case Easy, Normal, Hard;
     
-    func toValue() -> Float {
+    func toSpeedValue() -> Float {
         switch(self) {
         case Easy:
             return 3.7;
@@ -34,6 +34,7 @@ struct GamePointIndex
 @objc enum GameSpeed: Int
 {
     case Slow, Normal, Fast;
+    
 }
 
 @objc class Settings
@@ -129,10 +130,6 @@ struct GamePointIndex
     
     var gamePoint: UInt {
         get { return Settings.GamePointValues[self.gamePointIndex]; }
-    }
-    
-    var difficultyValue: Float {
-        get { return self.difficulty.toValue(); }
     }
     
     func save()

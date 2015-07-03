@@ -10,30 +10,33 @@ import Foundation
 import AVFoundation
 import GameKit
 
-@objc
-enum GameState: Int {
+//! a state in the game
+@objc enum GameState: Int {
     case Disconnected = -1;
     case Paused;
-    case Countdown1, Countdown2, Countdown3, Countdown4;
+    case Countdown1, Countdown2, Countdown3;
     case Running;
     case Over;
 }
 
+//! ball velocity values
 struct BallSpeed {
     static let X:CGFloat = 3
     static let Y:CGFloat = 4
 }
 
-@objc
-enum PacketType: UInt8 {
+//! type of network packet
+@objc enum PacketType: UInt8 {
     case Send, Ack, SendAndAck
 }
 
+//! flags on a packet
 struct PacketFlags {
     static var PlayerTurn:UInt8 = (1 << 0)
     static var PlayerOnLeft:UInt8 = (1 << 1)
 }
 
+//! a packet
 struct p0ngPacket
 {
     var ballX: Float;
@@ -53,15 +56,14 @@ struct p0ngPacket
     }
 }
 
-@objc
-enum GameSync: UInt8 {
+//! network sync type
+@objc enum GameSync: UInt8 {
     case None, WaitingForAck, HasToAck
 }
 
-@objc
-protocol GameProtocol
+//! a game protocol
+@objc protocol GameProtocol
 {
-
     func newGame(game: Game, ballPosition position: CGPoint);
 
     func gameOver( game: Game);
@@ -70,7 +72,7 @@ protocol GameProtocol
 
     func updateGame(game: Game, withBall ballLocation: CGPoint);
 
-    func updateGame(game: Game, withOpponent location: CGFloat);
+    func setOpponentPaddle(game: Game, withYLocation location: CGFloat);
 
     func updateStatus(status: String?);
 
@@ -82,8 +84,7 @@ protocol GameProtocol
 
 }
 
-@objc
-class Game
+@objc class Game
 {
     static let sharedInstance = Game();
     
@@ -156,10 +157,7 @@ class Game
         
         self.timer = NSTimer.scheduledTimerWithTimeInterval(Settings.sharedInstance.speed, target:self, selector:Selector("gameLoop:"), userInfo:nil, repeats:true);
         
-        
         Settings.addListener(self, selector:Selector("settingsChanged:"));
-        
-        
     }
     
     // MARK: Dynamic properties
@@ -224,17 +222,35 @@ class Game
 
     func settingsChanged(notification: NSNotification)
     {
-        let settings = notification.object as! Settings;
-        
-        self.timer.invalidate();
-        
-        self.timer = NSTimer.scheduledTimerWithTimeInterval(settings.speed, target:self, selector:Selector("gameLoop:"), userInfo:nil, repeats:true);
+        if let settings = notification.object as? Settings {
+    
+            self.timer.invalidate();
+            
+            self.timer = NSTimer.scheduledTimerWithTimeInterval(settings.speed, target:self, selector:Selector("gameLoop:"), userInfo:nil, repeats:true);
+        }
     
     }
     
     func calcSpeedBonus(ball: UIView, paddle: UIView, margin: Int) {
         if(Int(ball.center.y - paddle.frame.origin.y) <= margin || Int((paddle.frame.origin.y+paddle.frame.size.height) - ball.center.y) <= margin) {
-            self.speedBonus = CGPointMake(1.1, 1.2);
+            
+            let settings = Settings.sharedInstance;
+            
+            var bonus: CGPoint;
+            
+            switch(settings.difficulty) {
+            case GameDifficulty.Easy:
+                bonus = CGPointMake(1.1, 1.36);
+                break;
+            case GameDifficulty.Normal:
+                bonus = CGPointMake(1.1, 1.28);
+                break;
+            case GameDifficulty.Hard:
+                bonus = CGPointMake(1.1, 1.2);
+                break;
+            }
+            
+            self.speedBonus = bonus;
             NSLog("Speed Bonus!");
         }
         else {
@@ -242,7 +258,8 @@ class Game
         }
     }
     
-    func sendPacket( state: PacketType) {
+    //! sends a packet to game center
+    func sendPacket( state: PacketType ) {
         
         if (self.delegate == nil || self.state == GameState.Disconnected || self.opponentIsComputer) {
             return;
@@ -263,7 +280,7 @@ class Game
         packet.hostingFlags = 0;
         packet.type = state.rawValue;
 
-        
+        // TODO: test ipad hi res / iphone 6
         if(UIDevice.currentResolution() == UIDeviceResolution.iPhoneTallerHiRes) {
             packet.ballX = Float(ballPos.x / (1136.0/960.0));
         } else {
@@ -280,7 +297,6 @@ class Game
         }
         
         let data = NSData(bytes:&packet, length:sizeof(p0ngPacket));
-        
         
         if(state != PacketType.Send) {
             GameCenter.sharedInstance.sendReliableData(data);
@@ -365,8 +381,7 @@ class Game
                         switch(state!)
                         {
                             case GameState.Countdown2,
-                                 GameState.Countdown3,
-                                 GameState.Countdown4:
+                                 GameState.Countdown3:
                                 self.delegate!.updateStatus(String(format:"%i", state!.rawValue-1));
                             break;
                             case GameState.Running:
@@ -390,27 +405,26 @@ class Game
                 ballLocation = CGPointMake(UIScreen.mainScreen().bounds.size.height - CGFloat(packet.ballX), CGFloat(packet.ballY));
             }
             
-            if (self.delegate != nil) {
-                self.delegate!.updateGame(self, withBall:ballLocation);
-                
-                if(self.state == GameState.Over) {
-                    self.delegate!.gameOver(self);
-                }
+            self.delegate?.updateGame(self, withBall:ballLocation);
+            
+            if(self.state == GameState.Over) {
+                self.delegate?.gameOver(self);
             }
         }
         
-        if (self.delegate != nil) {
-            self.delegate!.updateGame(self, withOpponent: CGFloat(packet.paddleY));
-        }
-        
+        self.delegate?.setOpponentPaddle(self, withYLocation: CGFloat(packet.paddleY));
     }
     
-    func updateForBall(ball: UIView, andPaddle playerPaddle: UIView, andOpponent opponentPaddle: UIView) {
     
+    func update(ball: UIView, playerPaddle: UIView, opponentPaddle: UIView) {
+    
+        // if we're not running, or waiting for a network sync...
         if(self.state != GameState.Running || self.syncState != GameSync.None) {
+            // just return
             return;
         }
         
+        // set the ball center
         ball.center = CGPointMake(ball.center.x + self.speedX, ball.center.y + self.speedY);
         
         var screenSize = UIScreen.mainScreen().bounds.size;
@@ -469,7 +483,7 @@ class Game
         
             if(self.randomAILag < self.interval)
             {
-                let speed = CGFloat(settings.difficultyValue);
+                let speed = CGFloat(settings.difficulty.toSpeedValue());
             
                 var percent:UInt32;
             
@@ -516,7 +530,7 @@ class Game
         self.opponentIsComputer = isComputer;
         
         if (self.delegate != nil) {
-            self.delegate!.newGame(self, ballPosition:arc4random_uniform(100) < 50 ? self.delegate!.playerPosition : self.delegate!.opponentPosition);
+            self.delegate!.newGame(self, ballPosition:(arc4random_uniform(100) < 50) ? self.delegate!.playerPosition : self.delegate!.opponentPosition);
         }
         
         self.state = GameState.Countdown1;
@@ -532,9 +546,7 @@ class Game
     
         self.state = disconnected ? GameState.Disconnected : GameState.Over;
         
-        if (self.delegate != nil) {
-            self.delegate!.gameOver(self);
-        }
+        self.delegate?.gameOver(self);
         
         self.opponentScore = 0;
         self.playerScore = 0;
@@ -552,9 +564,11 @@ class Game
         
         self.playerTurn = !opponent;
         
-        let ballLocation = (opponent) ? self.delegate!.opponentPosition : self.delegate!.playerPosition;
+        if let delegate = self.delegate {
+            let ballLocation = (opponent) ? delegate.opponentPosition : delegate.playerPosition;
         
-        self.delegate!.updateGame(self, withBall:ballLocation);
+            delegate.updateGame(self, withBall:ballLocation);
+        }
         
         if(GameCenter.sharedInstance.isHosting) {
             self.broadcast(true);
@@ -564,10 +578,11 @@ class Game
     
     func updatePlayerScore(label: UILabel) {
         NSLog("Player scored");
+        
         self._playerScore++;
+        
         label.text = String(format:"%d", self._playerScore);
-        
-        
+    
         if(self._playerScore >= Settings.sharedInstance.gamePoint) {
             self.gameOver(false);
         } else {
@@ -592,9 +607,7 @@ class Game
         
             self.interval++;
             
-            if (self.delegate != nil) {
-                self.delegate!.gameTick(self);
-            }
+            self.delegate?.gameTick(self);
         }
     
     }

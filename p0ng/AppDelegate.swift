@@ -32,19 +32,14 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         
         viewController.view.alpha = 0;
         
-        if (self.window != nil) {
-            self.window!.rootViewController = viewController;
-        }
+        self.window?.rootViewController = viewController;
         
         if(animated)
         {
             UIView.animateWithDuration(0.75, animations:{ () in
                 
-                if(previous != nil)
-                {
-                    previous!.view.alpha = 0;
-                    previous!.view.removeFromSuperview();
-                }
+                previous?.view.alpha = 0;
+                previous?.view.removeFromSuperview();
                 
                 viewController.view.alpha = 1;
                 
@@ -52,9 +47,9 @@ class AppDelegate : UIResponder, UIApplicationDelegate
                 
                 });
             
-        } else if(previous != nil) {
+        } else {
             viewController.view.alpha = 1;
-            previous!.view.removeFromSuperview();
+            previous?.view.removeFromSuperview();
         }
         
     }
@@ -70,31 +65,25 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         self.viewControllers.removeLast();
         
         let previous = self.viewControllers.last;
-        
-        if (previous != nil ) {
-            
-            previous!.view.alpha = 0;
-        
-            if (self.window != nil) {
-                self.window!.rootViewController = previous;
-            }
-        
-            previous!.view.layoutIfNeeded();
-        }
+    
+        previous?.view.alpha = 0;
+    
+        self.window?.rootViewController = previous;
+    
+        previous?.view.layoutIfNeeded();
         
         if(animated) {
             UIView.animateWithDuration(0.75, animations:{ () in
-                    current!.view.alpha = 0;
-                    previous!.view.alpha = 1;
+                    current?.view.alpha = 0;
+                    previous?.view.alpha = 1;
                 }, completion: { (finished: Bool) in
                 
-                    current!.view.removeFromSuperview();
+                    current?.view.removeFromSuperview();
                 
                 });
         } else {
-            current!.view.removeFromSuperview();
+            current?.view.removeFromSuperview();
         }
-        
     }
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) -> Bool {
@@ -107,10 +96,9 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     
         self.viewControllers.append(viewController);
         
-        if (self.window != nil) {
-            self.window!.rootViewController = viewController;
-            self.window!.makeKeyAndVisible();
-        }
+        self.window?.rootViewController = viewController;
+        self.window?.makeKeyAndVisible();
+        
         return true;
     }
     
@@ -132,6 +120,4 @@ class AppDelegate : UIResponder, UIApplicationDelegate
             Game.sharedInstance.state = GameState.Countdown1;
         }
     }
-    
-
 }

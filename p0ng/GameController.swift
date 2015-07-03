@@ -41,127 +41,135 @@ class GameController : BaseController, GameProtocol
         
         let def = NSUserDefaults.standardUserDefaults();
         
+        // this only matters if we're coming from a Paused state
         if(Game.sharedInstance.state == GameState.Paused)
         {
-            var defVal = def.stringForKey("p0ngBall");
+            // parse the defaults into the values
             
-            if (self.ball != nil && defVal != nil) {
-                self.ball!.center = CGPointFromString(defVal!);
+            var defVal:String? = def.stringForKey("p0ngBall");
+            
+            if (defVal != nil) {
+                self.ball?.center = CGPointFromString(defVal!);
             }
             defVal = def.stringForKey("p0ngPaddleA");
             
-            if (self.paddleA != nil && defVal != nil) {
-               self.paddleA!.center = CGPointFromString(defVal!);
+            if (defVal != nil) {
+                self.paddleA?.center = CGPointFromString(defVal!);
             }
+            
             defVal = def.stringForKey("p0ngPaddleB");
             
-            if (self.paddleB != nil && defVal != nil) {
-                self.paddleB!.center = CGPointFromString(defVal!);
+            if (defVal != nil) {
+                self.paddleB?.center = CGPointFromString(defVal!);
             }
             
-            if (self.playerScore != nil) {
-                self.playerScore!.text = String(format:"%ld", Game.sharedInstance.playerScore);
-            }
-            if (self.opponentScore != nil) {
-                self.opponentScore!.text = String(format:"%ld", Game.sharedInstance.opponentScore);
-            }
+            self.playerScore?.text = String(format:"%ld", Game.sharedInstance.playerScore);
+            
+            self.opponentScore?.text = String(format:"%ld", Game.sharedInstance.opponentScore);
+            
         }
         
+        // cleanup the defaults
         def.removeObjectForKey("p0ngBall");
         def.removeObjectForKey("p0ngPaddleA");
         def.removeObjectForKey("p0ngPaddleB");
     }
     
     func save() {
-    
+        
+        // if we're not paused this shouldn't run
         if(Game.sharedInstance.state != GameState.Paused) {
             return;
         }
     
         let def = NSUserDefaults.standardUserDefaults();
     
+        // set the defaults
+        
         if (self.ball != nil) {
             def.setObject(NSStringFromCGPoint(self.ball!.center), forKey:"p0ngBall");
         }
+        
         if (self.paddleA != nil) {
             def.setObject(NSStringFromCGPoint(self.paddleA!.center), forKey:"p0ngPaddleA");
         }
+        
         if (self.paddleB != nil) {
             def.setObject(NSStringFromCGPoint(self.paddleB!.center), forKey:"p0ngPaddleB");
         }
     }
     
+    //! returns to the menu screen
     @IBAction func showMenu(sender: AnyObject) {
         
         let game = Game.sharedInstance;
         
+        // if this is a networked game, returning to the menu will end the game
         if(!game.opponentIsComputer) {
             game.gameOver(true);
-        } else if(game.state != GameState.Over) {
+        }
+        // otherwise we can pause the state
+        else if(game.state != GameState.Over) {
             game.state = GameState.Paused;
         }
         
         self.save();
         
-        if (self.appDelegate != nil) {
-            self.appDelegate!.popViewControllerAnimated(true);
-        }
+        // pop the view
+        self.appDelegate?.popViewControllerAnimated(true);
+        
     }
     
+    //! starts a new game
     func newGame(game:Game, ballPosition position: CGPoint) {
         
-        if (self.playerScore != nil) {
-            self.playerScore!.text = String(format:"%i", game.playerScore);
-            self.playerScore!.hidden = false;
-        }
-        if (self.opponentScore != nil) {
-            self.opponentScore!.text = String(format:"%i", game.opponentScore);
-            self.opponentScore!.hidden = false;
-        }
+        // set the score values
+        self.playerScore?.text = String(format:"%i", game.playerScore);
+        self.playerScore?.hidden = false;
         
-        if (self.ball != nil) {
-            self.ball!.center = position;
-        }
+        self.opponentScore?.text = String(format:"%i", game.opponentScore);
+        self.opponentScore?.hidden = false;
         
+        // set the ball position
+        self.ball?.center = position;
         
-        if (self.lblStatus != nil) {
-            self.lblStatus!.hidden = true;
-        }
+        self.lblStatus?.hidden = true;
         
+        // make some ball velocity
         let ySpeed = CGFloat((UInt32(arc4random_uniform(50)) >= 25) ? BallSpeed.Y : -BallSpeed.Y);
         
-        let xSpeed = CGFloat((self.ball != nil && self.ball!.center.x > self.view.frame.size.width/2) ? -BallSpeed.X : BallSpeed.X);
+        let xSpeed = CGFloat((self.ball?.center.x > self.view.frame.size.width/2) ? -BallSpeed.X : BallSpeed.X);
         
         game.ballVelocity = CGPointMake(xSpeed, ySpeed);
     }
     
-    func updateGame(game:Game, withOpponent location: CGFloat) {
-        
-        if (self.opponentPaddle != nil) {
-            self.opponentPaddle!.center = CGPointMake(self.opponentPaddle!.center.x, location);
-            
-            if(self.ball != nil && game.state.rawValue < GameState.Running.rawValue && !game.playerTurn)
-            {
-                self.ball!.center = self.opponentPaddle!.center;
-            }
+    //! update the game for an opponent
+    func setOpponentPaddle(game:Game, withYLocation location: CGFloat) {
+        if (self.opponentPaddle == nil) {
+            return;
         }
         
+        self.opponentPaddle!.center = CGPointMake(self.opponentPaddle!.center.x, location);
+        
+        // if the game isn't running, and its not the players turn, set the ball location as well
+        if(game.state.rawValue < GameState.Running.rawValue && !game.playerTurn)
+        {
+            self.ball?.center = self.opponentPaddle!.center;
+        }
+    
     }
     
+    //! sets the ball location and scores
     func updateGame( game: Game, withBall ballLocation: CGPoint)
     {
-        if (self.ball != nil) {
-            self.ball!.center = ballLocation;
-        }
+        self.ball?.center = ballLocation;
         
-        if (self.playerScore != nil) {
-            self.playerScore!.text = String(format:"%i", game.playerScore);
-        }
-        if (self.opponentScore != nil) {
-            self.opponentScore!.text = String(format:"%i", game.opponentScore);
-        }
+        self.playerScore?.text = String(format:"%i", game.playerScore);
+        
+        self.opponentScore?.text = String(format:"%i", game.opponentScore);
     }
     
+    //! updates the status label
     func updateStatus(status: String?)
     {
         if (self.lblStatus == nil) {
@@ -182,32 +190,34 @@ class GameController : BaseController, GameProtocol
         self.lblStatus!.center = CGPointMake(self.view.center.x, self.view.center.y);
     }
     
+    //! a tick in the game loop
     func gameTick(game: Game)
     {
         if(game.state == GameState.Running)
         {
-            if (self.lblStatus != nil) {
-                self.lblStatus!.hidden = true;
-            }
+            // we're running so hide the status label
+            self.lblStatus?.hidden = true;
             
+            // if we're waiting for a network sync, just return
             if(game.syncState != GameSync.None)
             {
                 NSLog("SYNC STATE: %d", game.syncState.rawValue);
                 return;
             }
             
-            game.updateForBall(self.ball!, andPaddle:self.playerPaddle!, andOpponent:self.opponentPaddle!);
+            // now apply the game logic
+            game.update(self.ball!, playerPaddle:self.playerPaddle!, opponentPaddle:self.opponentPaddle!);
             
-            // Begin Scoring Game Logic
-            if(self.ball != nil && self.ball!.center.x <= 0) {
+            // do the scoring
+            if(self.ball?.center.x <= 0 && self.scoreB != nil) {
                 if(Settings.sharedInstance.playerOnLeft) {
-                    game.updateOpponentScore( self.scoreB!);
+                    game.updateOpponentScore( self.scoreB! );
                 } else {
                     game.updatePlayerScore( self.scoreB! );
                 }
             }
             
-            if(self.ball != nil && self.ball!.center.x > self.view.bounds.size.width) {
+            if(self.ball?.center.x > self.view.bounds.size.width && self.scoreA != nil) {
                 if(Settings.sharedInstance.playerOnLeft) {
                     game.updatePlayerScore(self.scoreA!);
                 } else {
@@ -215,21 +225,23 @@ class GameController : BaseController, GameProtocol
                 }
             }
         }
+        // if we're in a countdown
         else if(game.state.rawValue > GameState.Paused.rawValue && game.state.rawValue < GameState.Running.rawValue) {
             
+            // if we haven't hit an interval...
             if(game.interval % Settings.sharedInstance.speedInterval != 0) {
                 return;
             }
             
+            // if we're waiting for a network sync
             if(game.syncState != GameSync.None)
             {
                 NSLog("SYNC STATE: %d", game.syncState.rawValue);
                 return;
             }
             
-            if (game.state != GameState.Countdown4) {
-                self.updateStatus(String(format:"%i", game.state.rawValue));
-            }
+            // set the status label to the current countdown
+            self.updateStatus(String(format:"%i", game.state.rawValue));
             
             game.state = GameState(rawValue: game.state.rawValue+1)!;
             
@@ -239,6 +251,7 @@ class GameController : BaseController, GameProtocol
         
     }
     
+    //! handle a game over
     func gameOver(game: Game) {
         
         if(game.state == GameState.Disconnected) {
@@ -262,69 +275,49 @@ class GameController : BaseController, GameProtocol
         var font = UIFont(name:"kongtext", size:24);
         
         if(font != nil) {
-            if (self.scoreA != nil) {
-                self.scoreA!.font = font!;
-            }
-            if (self.scoreB != nil) {
-                self.scoreB!.font = font!;
-            }
+            self.scoreA?.font = font!;
+            self.scoreB?.font = font!;
         }
         
         font = UIFont(name:"kongtext", size:30);
         
-        if(font != nil && self.lblStatus != nil) {
-            self.lblStatus!.font = font!;
+        if(font != nil) {
+            self.lblStatus?.font = font!;
         }
         
         font = UIFont(name: "kongtext", size:16);
         
-        if (font != nil && self.btnBack != nil && self.btnBack!.titleLabel != nil) {
-            self.btnBack!.titleLabel!.font = font!;
+        if (font != nil) {
+            self.btnBack?.titleLabel?.font = font!;
         }
         
         if(Settings.sharedInstance.playerOnLeft) {
-            if (self.paddleA != nil) {
-                self.playerPaddle = self.paddleA!;
-            }
-            if (self.paddleB != nil) {
-                self.opponentPaddle = self.paddleB!;
-            }
-            if (self.scoreA != nil) {
-                self.playerScore = self.scoreA!;
-            }
-            if (self.scoreB != nil) {
-                self.opponentScore = self.scoreB!;
-            }
+            self.playerPaddle = self.paddleA;
+            self.opponentPaddle = self.paddleB;
+            self.playerScore = self.scoreA;
+            self.opponentScore = self.scoreB;
+            
         } else {
-            if (self.paddleB != nil) {
-                self.playerPaddle = self.paddleB!;
-            }
-            if (self.paddleA != nil) {
-                self.opponentPaddle = self.paddleA!;
-            }
-            if (self.scoreB != nil) {
-                self.playerScore = self.scoreB!;
-            }
-            if (self.scoreA != nil) {
-                self.opponentScore = self.scoreA!;
-            }
+            self.playerPaddle = self.paddleB;
+            self.opponentPaddle = self.paddleA;
+            self.playerScore = self.scoreB;
+            self.opponentScore = self.scoreA;
         }
         
-        if (self.opponentPaddle != nil) {
-            self.opponentPaddle!.image = UIImage(named: "opponent_paddle.png");
-        }
+        self.opponentPaddle?.image = UIImage(named: "opponent_paddle.png");
+        
         self.restore();
         
-        if (self.lblStatus != nil) {
-            self.lblStatus!.backgroundColor = UIColor.grayColor();
-            self.lblStatus!.layer.cornerRadius = 10;
-            self.lblStatus!.layer.borderColor = UIColor.whiteColor().CGColor;
-            self.lblStatus!.layer.borderWidth = 2;
-            self.lblStatus!.topInset = 10;
-            self.lblStatus!.bottomInset = 10;
-            self.lblStatus!.rightInset = 15;
-            self.lblStatus!.leftInset = 15;
-            self.lblStatus!.hidden = true;
+        if let status = self.lblStatus {
+            status.backgroundColor = UIColor.grayColor();
+            status.layer.cornerRadius = 10;
+            status.layer.borderColor = UIColor.whiteColor().CGColor;
+            status.layer.borderWidth = 2;
+            status.topInset = 10;
+            status.bottomInset = 10;
+            status.rightInset = 15;
+            status.leftInset = 15;
+            status.hidden = true;
         }
         
     
@@ -354,12 +347,6 @@ class GameController : BaseController, GameProtocol
         return UIInterfaceOrientation.LandscapeRight;
     }
     
-   override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?)
-    {
-        self.touchesMoved(touches, withEvent:event);
-    }
-    
-    
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?)
     {
         if (touches.first == nil) {
@@ -388,6 +375,7 @@ class GameController : BaseController, GameProtocol
                 
                 self.playerPaddle!.center = yLocation;
                 
+                // let network player know the paddle has moved
                 game.broadcast(false);
             }
         }
