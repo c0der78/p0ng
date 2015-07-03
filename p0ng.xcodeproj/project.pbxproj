@@ -11,13 +11,10 @@
 		210F4F1E169D39C4008988FD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 210F4F1D169D39C4008988FD /* Foundation.framework */; };
 		210F4F20169D39C4008988FD /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 210F4F1F169D39C4008988FD /* CoreGraphics.framework */; };
 		210F4F26169D39C4008988FD /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 210F4F24169D39C4008988FD /* InfoPlist.strings */; };
-		210F4F28169D39C4008988FD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 210F4F27169D39C4008988FD /* main.m */; };
-		210F4F2C169D39C4008988FD /* A3AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 210F4F2B169D39C4008988FD /* A3AppDelegate.m */; };
 		210F4F2E169D39C4008988FD /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 210F4F2D169D39C4008988FD /* Default.png */; };
 		210F4F30169D39C4008988FD /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 210F4F2F169D39C4008988FD /* Default@2x.png */; };
 		210F4F32169D39C4008988FD /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 210F4F31169D39C4008988FD /* Default-568h@2x.png */; };
-		210F4F35169D39C4008988FD /* A3GameController.m in Sources */ = {isa = PBXBuildFile; fileRef = 210F4F34169D39C4008988FD /* A3GameController.m */; };
-		210F4F38169D39C4008988FD /* A3GameController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 210F4F36169D39C4008988FD /* A3GameController.xib */; };
+		210F4F38169D39C4008988FD /* GameController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 210F4F36169D39C4008988FD /* GameController.xib */; };
 		210F4F41169D39C4008988FD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 210F4F1B169D39C4008988FD /* UIKit.framework */; };
 		210F4F42169D39C4008988FD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 210F4F1D169D39C4008988FD /* Foundation.framework */; };
 		210F4F4A169D39C4008988FD /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 210F4F48169D39C4008988FD /* InfoPlist.strings */; };
@@ -28,23 +25,25 @@
 		210F4F77169D3A07008988FD /* offthewall.wav in Resources */ = {isa = PBXBuildFile; fileRef = 210F4F66169D3A07008988FD /* offthewall.wav */; };
 		210F4F78169D3A07008988FD /* paddle.png in Resources */ = {isa = PBXBuildFile; fileRef = 210F4F67169D3A07008988FD /* paddle.png */; };
 		210F4F7A169D3F0B008988FD /* kongtext.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 210F4F79169D3F0B008988FD /* kongtext.ttf */; };
-		210F4F7D169D4244008988FD /* A3PongGame.m in Sources */ = {isa = PBXBuildFile; fileRef = 210F4F7C169D4244008988FD /* A3PongGame.m */; };
 		210F4F84169D61B3008988FD /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 210F4F83169D61B3008988FD /* GameKit.framework */; };
-		2130B07516D0309B00CB9ABB /* UIDevice+Resolutions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2130B07416D0309B00CB9ABB /* UIDevice+Resolutions.m */; };
 		2130B07916D03CBA00CB9ABB /* opponent_paddle.png in Resources */ = {isa = PBXBuildFile; fileRef = 2130B07816D03CBA00CB9ABB /* opponent_paddle.png */; };
-		2130B07C16D0AE8500CB9ABB /* A3PongSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 2130B07B16D0AE8400CB9ABB /* A3PongSettings.m */; };
 		2130B07E16D0DC5B00CB9ABB /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2130B07D16D0DC5B00CB9ABB /* AVFoundation.framework */; };
 		2157476B16AE69A500AEA307 /* p0ng.png in Resources */ = {isa = PBXBuildFile; fileRef = 2157476A16AE69A500AEA307 /* p0ng.png */; };
 		2157476D16AE6A0400AEA307 /* p0ng-retina.png in Resources */ = {isa = PBXBuildFile; fileRef = 2157476C16AE6A0400AEA307 /* p0ng-retina.png */; };
-		21A61AD316ABB55500043D7B /* A3MenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 21A61AD116ABB55500043D7B /* A3MenuViewController.m */; };
-		21A61AD416ABB55500043D7B /* A3MenuViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 21A61AD216ABB55500043D7B /* A3MenuViewController.xib */; };
-		21A61AD716ABB99500043D7B /* A3GameCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 21A61AD616ABB99500043D7B /* A3GameCenter.m */; };
+		21A61AD416ABB55500043D7B /* MenuController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 21A61AD216ABB55500043D7B /* MenuController.xib */; };
 		21A61B0D16AC677600043D7B /* home_icon.gif in Resources */ = {isa = PBXBuildFile; fileRef = 21A61B0C16AC677600043D7B /* home_icon.gif */; };
-		21A61B1016AC78AC00043D7B /* A3Label.m in Sources */ = {isa = PBXBuildFile; fileRef = 21A61B0F16AC78AB00043D7B /* A3Label.m */; };
-		21C2D6DC16ACAB0000154A5A /* A3OptionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 21C2D6DA16ACAB0000154A5A /* A3OptionsViewController.m */; };
-		21C2D6DD16ACAB0000154A5A /* A3OptionsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 21C2D6DB16ACAB0000154A5A /* A3OptionsViewController.xib */; };
+		21C2D6DD16ACAB0000154A5A /* OptionsController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 21C2D6DB16ACAB0000154A5A /* OptionsController.xib */; };
 		21C2D6E016ACF7BD00154A5A /* leftarrow.white.png in Resources */ = {isa = PBXBuildFile; fileRef = 21C2D6DF16ACF7BD00154A5A /* leftarrow.white.png */; };
-		21C2D6E816AD0A7E00154A5A /* A3ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 21C2D6E716AD0A7E00154A5A /* A3ViewController.m */; };
+		9491E8951B45B30D00757AC7 /* GameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9491E8941B45B30D00757AC7 /* GameController.swift */; };
+		9491E8971B45D05F00757AC7 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9491E8961B45D05F00757AC7 /* Game.swift */; };
+		9491E8991B46120D00757AC7 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9491E8981B46120C00757AC7 /* Settings.swift */; };
+		94DABDAF1B46234300297833 /* GameCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DABDAE1B46234300297833 /* GameCenter.swift */; };
+		94DABDB11B46386000297833 /* MenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DABDB01B46386000297833 /* MenuController.swift */; };
+		94DABDB31B463E6D00297833 /* OptionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DABDB21B463E6D00297833 /* OptionsController.swift */; };
+		94DABDB51B4644F000297833 /* InsetLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DABDB41B4644F000297833 /* InsetLabel.swift */; };
+		94DABDB71B4646F300297833 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DABDB61B4646F300297833 /* AppDelegate.swift */; };
+		94DABDB91B464C2600297833 /* BaseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DABDB81B464C2600297833 /* BaseController.swift */; };
+		94DABDBB1B4651AF00297833 /* UIDevice+Resolutions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DABDBA1B4651AF00297833 /* UIDevice+Resolutions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,16 +63,10 @@
 		210F4F1F169D39C4008988FD /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		210F4F23169D39C4008988FD /* p0ng-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "p0ng-Info.plist"; sourceTree = "<group>"; };
 		210F4F25169D39C4008988FD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		210F4F27169D39C4008988FD /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		210F4F29169D39C4008988FD /* p0ng-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "p0ng-Prefix.pch"; sourceTree = "<group>"; };
-		210F4F2A169D39C4008988FD /* A3AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = A3AppDelegate.h; sourceTree = "<group>"; };
-		210F4F2B169D39C4008988FD /* A3AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = A3AppDelegate.m; sourceTree = "<group>"; };
 		210F4F2D169D39C4008988FD /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		210F4F2F169D39C4008988FD /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		210F4F31169D39C4008988FD /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		210F4F33169D39C4008988FD /* A3GameController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = A3GameController.h; sourceTree = "<group>"; };
-		210F4F34169D39C4008988FD /* A3GameController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = A3GameController.m; sourceTree = "<group>"; };
-		210F4F37169D39C4008988FD /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/A3GameController.xib; sourceTree = "<group>"; };
+		210F4F37169D39C4008988FD /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/GameController.xib; sourceTree = "<group>"; };
 		210F4F3E169D39C4008988FD /* p0ngTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = p0ngTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		210F4F47169D39C4008988FD /* p0ngTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "p0ngTests-Info.plist"; sourceTree = "<group>"; };
 		210F4F49169D39C4008988FD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -85,34 +78,26 @@
 		210F4F66169D3A07008988FD /* offthewall.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = offthewall.wav; sourceTree = "<group>"; };
 		210F4F67169D3A07008988FD /* paddle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = paddle.png; sourceTree = "<group>"; };
 		210F4F79169D3F0B008988FD /* kongtext.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = kongtext.ttf; sourceTree = "<group>"; };
-		210F4F7B169D4244008988FD /* A3PongGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = A3PongGame.h; sourceTree = "<group>"; };
-		210F4F7C169D4244008988FD /* A3PongGame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = A3PongGame.m; sourceTree = "<group>"; };
-		210F4F7E169D43F8008988FD /* A3PongGameProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = A3PongGameProtocol.h; sourceTree = "<group>"; };
 		210F4F83169D61B3008988FD /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
-		2130B07316D0309B00CB9ABB /* UIDevice+Resolutions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+Resolutions.h"; sourceTree = "<group>"; };
-		2130B07416D0309B00CB9ABB /* UIDevice+Resolutions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+Resolutions.m"; sourceTree = "<group>"; };
 		2130B07616D039B900CB9ABB /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		2130B07816D03CBA00CB9ABB /* opponent_paddle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = opponent_paddle.png; sourceTree = "<group>"; };
-		2130B07A16D0AE8400CB9ABB /* A3PongSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = A3PongSettings.h; sourceTree = "<group>"; };
-		2130B07B16D0AE8400CB9ABB /* A3PongSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = A3PongSettings.m; sourceTree = "<group>"; };
 		2130B07D16D0DC5B00CB9ABB /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		2157476A16AE69A500AEA307 /* p0ng.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = p0ng.png; path = ../../p0ng.png; sourceTree = "<group>"; };
 		2157476C16AE6A0400AEA307 /* p0ng-retina.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "p0ng-retina.png"; path = "../../p0ng-retina.png"; sourceTree = "<group>"; };
-		21A61AD016ABB55500043D7B /* A3MenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = A3MenuViewController.h; sourceTree = "<group>"; };
-		21A61AD116ABB55500043D7B /* A3MenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = A3MenuViewController.m; sourceTree = "<group>"; };
-		21A61AD216ABB55500043D7B /* A3MenuViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = A3MenuViewController.xib; sourceTree = "<group>"; };
-		21A61AD516ABB99500043D7B /* A3GameCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = A3GameCenter.h; sourceTree = "<group>"; };
-		21A61AD616ABB99500043D7B /* A3GameCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = A3GameCenter.m; sourceTree = "<group>"; };
-		21A61AE416ABE3D400043D7B /* A3GameCenterProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = A3GameCenterProtocol.h; sourceTree = "<group>"; };
+		21A61AD216ABB55500043D7B /* MenuController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MenuController.xib; sourceTree = "<group>"; };
 		21A61B0C16AC677600043D7B /* home_icon.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = home_icon.gif; sourceTree = "<group>"; };
-		21A61B0E16AC78AA00043D7B /* A3Label.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = A3Label.h; sourceTree = "<group>"; };
-		21A61B0F16AC78AB00043D7B /* A3Label.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = A3Label.m; sourceTree = "<group>"; };
-		21C2D6D916ACAB0000154A5A /* A3OptionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = A3OptionsViewController.h; sourceTree = "<group>"; };
-		21C2D6DA16ACAB0000154A5A /* A3OptionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = A3OptionsViewController.m; sourceTree = "<group>"; };
-		21C2D6DB16ACAB0000154A5A /* A3OptionsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = A3OptionsViewController.xib; sourceTree = "<group>"; };
+		21C2D6DB16ACAB0000154A5A /* OptionsController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OptionsController.xib; sourceTree = "<group>"; };
 		21C2D6DF16ACF7BD00154A5A /* leftarrow.white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = leftarrow.white.png; sourceTree = "<group>"; };
-		21C2D6E616AD0A7E00154A5A /* A3ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = A3ViewController.h; sourceTree = "<group>"; };
-		21C2D6E716AD0A7E00154A5A /* A3ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = A3ViewController.m; sourceTree = "<group>"; };
+		9491E8941B45B30D00757AC7 /* GameController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameController.swift; sourceTree = "<group>"; };
+		9491E8961B45D05F00757AC7 /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
+		9491E8981B46120C00757AC7 /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		94DABDAE1B46234300297833 /* GameCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameCenter.swift; sourceTree = "<group>"; };
+		94DABDB01B46386000297833 /* MenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuController.swift; sourceTree = "<group>"; };
+		94DABDB21B463E6D00297833 /* OptionsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionsController.swift; sourceTree = "<group>"; };
+		94DABDB41B4644F000297833 /* InsetLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InsetLabel.swift; sourceTree = "<group>"; };
+		94DABDB61B4646F300297833 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		94DABDB81B464C2600297833 /* BaseController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseController.swift; sourceTree = "<group>"; };
+		94DABDBA1B4651AF00297833 /* UIDevice+Resolutions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIDevice+Resolutions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -175,32 +160,21 @@
 		210F4F21169D39C4008988FD /* p0ng */ = {
 			isa = PBXGroup;
 			children = (
-				210F4F82169D60E3008988FD /* Categories */,
 				210F4F56169D3A07008988FD /* Assets */,
-				210F4F2A169D39C4008988FD /* A3AppDelegate.h */,
-				210F4F2B169D39C4008988FD /* A3AppDelegate.m */,
-				210F4F33169D39C4008988FD /* A3GameController.h */,
-				210F4F34169D39C4008988FD /* A3GameController.m */,
-				210F4F36169D39C4008988FD /* A3GameController.xib */,
 				210F4F22169D39C4008988FD /* Supporting Files */,
-				210F4F7B169D4244008988FD /* A3PongGame.h */,
-				210F4F7C169D4244008988FD /* A3PongGame.m */,
-				210F4F7E169D43F8008988FD /* A3PongGameProtocol.h */,
-				21A61AD016ABB55500043D7B /* A3MenuViewController.h */,
-				21A61AD116ABB55500043D7B /* A3MenuViewController.m */,
-				21A61AD216ABB55500043D7B /* A3MenuViewController.xib */,
-				21A61AD516ABB99500043D7B /* A3GameCenter.h */,
-				21A61AD616ABB99500043D7B /* A3GameCenter.m */,
-				21A61AE416ABE3D400043D7B /* A3GameCenterProtocol.h */,
-				21A61B0E16AC78AA00043D7B /* A3Label.h */,
-				21A61B0F16AC78AB00043D7B /* A3Label.m */,
-				21C2D6D916ACAB0000154A5A /* A3OptionsViewController.h */,
-				21C2D6DA16ACAB0000154A5A /* A3OptionsViewController.m */,
-				21C2D6DB16ACAB0000154A5A /* A3OptionsViewController.xib */,
-				21C2D6E616AD0A7E00154A5A /* A3ViewController.h */,
-				21C2D6E716AD0A7E00154A5A /* A3ViewController.m */,
-				2130B07A16D0AE8400CB9ABB /* A3PongSettings.h */,
-				2130B07B16D0AE8400CB9ABB /* A3PongSettings.m */,
+				9491E8941B45B30D00757AC7 /* GameController.swift */,
+				210F4F36169D39C4008988FD /* GameController.xib */,
+				9491E8961B45D05F00757AC7 /* Game.swift */,
+				9491E8981B46120C00757AC7 /* Settings.swift */,
+				94DABDAE1B46234300297833 /* GameCenter.swift */,
+				94DABDB01B46386000297833 /* MenuController.swift */,
+				21A61AD216ABB55500043D7B /* MenuController.xib */,
+				94DABDB21B463E6D00297833 /* OptionsController.swift */,
+				21C2D6DB16ACAB0000154A5A /* OptionsController.xib */,
+				94DABDB41B4644F000297833 /* InsetLabel.swift */,
+				94DABDB61B4646F300297833 /* AppDelegate.swift */,
+				94DABDB81B464C2600297833 /* BaseController.swift */,
+				94DABDBA1B4651AF00297833 /* UIDevice+Resolutions.swift */,
 			);
 			path = p0ng;
 			sourceTree = "<group>";
@@ -210,8 +184,6 @@
 			children = (
 				210F4F23169D39C4008988FD /* p0ng-Info.plist */,
 				210F4F24169D39C4008988FD /* InfoPlist.strings */,
-				210F4F27169D39C4008988FD /* main.m */,
-				210F4F29169D39C4008988FD /* p0ng-Prefix.pch */,
 				210F4F2D169D39C4008988FD /* Default.png */,
 				210F4F2F169D39C4008988FD /* Default@2x.png */,
 				210F4F31169D39C4008988FD /* Default-568h@2x.png */,
@@ -254,15 +226,6 @@
 				210F4F67169D3A07008988FD /* paddle.png */,
 			);
 			path = Assets;
-			sourceTree = "<group>";
-		};
-		210F4F82169D60E3008988FD /* Categories */ = {
-			isa = PBXGroup;
-			children = (
-				2130B07316D0309B00CB9ABB /* UIDevice+Resolutions.h */,
-				2130B07416D0309B00CB9ABB /* UIDevice+Resolutions.m */,
-			);
-			name = Categories;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -311,8 +274,9 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = A3;
+				LastSwiftUpdateCheck = 0700;
 				LastTestingUpgradeCheck = 0510;
-				LastUpgradeCheck = 0450;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "arg3 software";
 				TargetAttributes = {
 					210F4F16169D39C4008988FD = {
@@ -347,16 +311,16 @@
 				210F4F2E169D39C4008988FD /* Default.png in Resources */,
 				210F4F30169D39C4008988FD /* Default@2x.png in Resources */,
 				210F4F32169D39C4008988FD /* Default-568h@2x.png in Resources */,
-				210F4F38169D39C4008988FD /* A3GameController.xib in Resources */,
+				210F4F38169D39C4008988FD /* GameController.xib in Resources */,
 				210F4F74169D3A07008988FD /* ball.png in Resources */,
 				210F4F75169D3A07008988FD /* court.png in Resources */,
 				210F4F76169D3A07008988FD /* offthepaddle.wav in Resources */,
 				210F4F77169D3A07008988FD /* offthewall.wav in Resources */,
 				210F4F78169D3A07008988FD /* paddle.png in Resources */,
 				210F4F7A169D3F0B008988FD /* kongtext.ttf in Resources */,
-				21A61AD416ABB55500043D7B /* A3MenuViewController.xib in Resources */,
+				21A61AD416ABB55500043D7B /* MenuController.xib in Resources */,
 				21A61B0D16AC677600043D7B /* home_icon.gif in Resources */,
-				21C2D6DD16ACAB0000154A5A /* A3OptionsViewController.xib in Resources */,
+				21C2D6DD16ACAB0000154A5A /* OptionsController.xib in Resources */,
 				21C2D6E016ACF7BD00154A5A /* leftarrow.white.png in Resources */,
 				2157476B16AE69A500AEA307 /* p0ng.png in Resources */,
 				2157476D16AE6A0400AEA307 /* p0ng-retina.png in Resources */,
@@ -395,17 +359,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				210F4F28169D39C4008988FD /* main.m in Sources */,
-				210F4F2C169D39C4008988FD /* A3AppDelegate.m in Sources */,
-				210F4F35169D39C4008988FD /* A3GameController.m in Sources */,
-				210F4F7D169D4244008988FD /* A3PongGame.m in Sources */,
-				21A61AD316ABB55500043D7B /* A3MenuViewController.m in Sources */,
-				21A61AD716ABB99500043D7B /* A3GameCenter.m in Sources */,
-				21A61B1016AC78AC00043D7B /* A3Label.m in Sources */,
-				21C2D6DC16ACAB0000154A5A /* A3OptionsViewController.m in Sources */,
-				21C2D6E816AD0A7E00154A5A /* A3ViewController.m in Sources */,
-				2130B07516D0309B00CB9ABB /* UIDevice+Resolutions.m in Sources */,
-				2130B07C16D0AE8500CB9ABB /* A3PongSettings.m in Sources */,
+				94DABDB71B4646F300297833 /* AppDelegate.swift in Sources */,
+				9491E8951B45B30D00757AC7 /* GameController.swift in Sources */,
+				94DABDB91B464C2600297833 /* BaseController.swift in Sources */,
+				94DABDAF1B46234300297833 /* GameCenter.swift in Sources */,
+				94DABDB11B46386000297833 /* MenuController.swift in Sources */,
+				9491E8991B46120D00757AC7 /* Settings.swift in Sources */,
+				9491E8971B45D05F00757AC7 /* Game.swift in Sources */,
+				94DABDBB1B4651AF00297833 /* UIDevice+Resolutions.swift in Sources */,
+				94DABDB31B463E6D00297833 /* OptionsController.swift in Sources */,
+				94DABDB51B4644F000297833 /* InsetLabel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,12 +399,12 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		210F4F36169D39C4008988FD /* A3GameController.xib */ = {
+		210F4F36169D39C4008988FD /* GameController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
 				210F4F37169D39C4008988FD /* en */,
 			);
-			name = A3GameController.xib;
+			name = GameController.xib;
 			sourceTree = "<group>";
 		};
 		210F4F48169D39C4008988FD /* InfoPlist.strings */ = {
@@ -466,6 +429,8 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert Jennings (CLD3EMY3F9)";
 				COPY_PHASE_STRIP = NO;
+				DEFINES_MODULE = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -477,7 +442,8 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				MODULE_NAME = "";
 				ONLY_ACTIVE_ARCH = YES;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "05C4D775-F738-4021-9CA9-1F50B1179C7F";
 				SDKROOT = iphoneos;
@@ -495,11 +461,13 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert Jennings (CLD3EMY3F9)";
 				COPY_PHASE_STRIP = YES;
+				DEFINES_MODULE = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				MODULE_NAME = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "05C4D775-F738-4021-9CA9-1F50B1179C7F";
 				SDKROOT = iphoneos;
@@ -510,15 +478,21 @@
 		210F4F51169D39C4008988FD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEFINES_MODULE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "p0ng/p0ng-Prefix.pch";
 				INFOPLIST_FILE = "p0ng/p0ng-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.arg3.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "4329EB74-B790-4181-9453-26FE13BA86D5";
+				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "4329EB74-B790-4181-9453-26FE13BA86D5";
+				SWIFT_OBJC_BRIDGING_HEADER = "p0ng/p0ng-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -527,15 +501,20 @@
 		210F4F52169D39C4008988FD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEFINES_MODULE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "p0ng/p0ng-Prefix.pch";
 				INFOPLIST_FILE = "p0ng/p0ng-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.arg3.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "4329EB74-B790-4181-9453-26FE13BA86D5";
+				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "4329EB74-B790-4181-9453-26FE13BA86D5";
+				SWIFT_OBJC_BRIDGING_HEADER = "p0ng/p0ng-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -553,6 +532,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "p0ng/p0ng-Prefix.pch";
 				INFOPLIST_FILE = "p0ngTests/p0ngTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.arg3.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
@@ -570,6 +550,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "p0ng/p0ng-Prefix.pch";
 				INFOPLIST_FILE = "p0ngTests/p0ngTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.arg3.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
