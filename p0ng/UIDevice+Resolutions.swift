@@ -8,7 +8,7 @@
 
 import UIKit
 
-enum UIDeviceResolution: Int {
+enum UIDeviceResolution: UInt16 {
     
     case iPhoneStandardRes      = 1;    // iPhone 1,3,3GS Standard Resolution   (320x480px)
     case iPhoneHiRes            = 2;    // iPhone 4,4S High Resolution          (640x960px)

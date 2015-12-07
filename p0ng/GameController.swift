@@ -31,7 +31,7 @@ class GameController : BaseController, GameProtocol
         super.init(delegate: delegate, nibName: nibNameOrNil, bundle: nibBundleOrNil);
     }
     
-    required init(coder: NSCoder) {
+    required init?(coder: NSCoder) {
         super.init(coder: coder);
     }
 
@@ -199,9 +199,9 @@ class GameController : BaseController, GameProtocol
             self.lblStatus?.hidden = true;
             
             // if we're waiting for a network sync, just return
-            if(game.syncState != GameSync.None)
+            if(game.syncState == GameSync.WaitingForAck)
             {
-                NSLog("SYNC STATE: %d", game.syncState.rawValue);
+                NSLog("TICK SYNC WAIT: %@", game.state.description);
                 return;
             }
             
@@ -234,9 +234,9 @@ class GameController : BaseController, GameProtocol
             }
             
             // if we're waiting for a network sync
-            if(game.syncState != GameSync.None)
+            if(game.syncState == GameSync.WaitingForAck/* && game.syncState != GameSync.HasToAck*/)
             {
-                NSLog("SYNC STATE: %d", game.syncState.rawValue);
+                NSLog("TICK SYNC WAIT: %@", game.state.description);
                 return;
             }
             
@@ -245,7 +245,7 @@ class GameController : BaseController, GameProtocol
             
             game.state = GameState(rawValue: game.state.rawValue+1)!;
             
-            game.broadcast(true);
+            game.broadcast(PacketType.State);
             
         }
         
@@ -376,7 +376,36 @@ class GameController : BaseController, GameProtocol
                 self.playerPaddle!.center = yLocation;
                 
                 // let network player know the paddle has moved
-                game.broadcast(false);
+                game.broadcast(PacketType.PaddleMove);
+            }
+        }
+    }
+    
+    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        
+        super.touchesEnded(touches, withEvent: event);
+        
+        if (touches.first == nil) {
+            return;
+        }
+        let touch = touches.first!;
+        
+        let location = touch.locationInView(touch.view);
+        
+        let isInPlayerZone = Settings.sharedInstance.playerOnLeft ? (location.x < 25) : (location.x > 400);
+        
+        if (isInPlayerZone && self.playerPaddle != nil) {
+            let yLocation: CGPoint = CGPointMake(self.playerPaddle!.center.x, location.y);
+            
+            if(yLocation.y - (self.playerPaddle!.frame.size.height/2) > 25 &&
+                yLocation.y + (self.playerPaddle!.frame.size.height/2)
+                < UIScreen.mainScreen().bounds.size.width-25)
+            {
+                
+                let game = Game.sharedInstance;
+                
+                // let network player know the paddle final state
+                game.broadcast(PacketType.Paddle);
             }
         }
     }

@@ -18,7 +18,7 @@ class BaseController: UIViewController
         super.init(nibName: nibNameOrNil, bundle: bundleNameOrNil);
     }
 
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder);
     }
     

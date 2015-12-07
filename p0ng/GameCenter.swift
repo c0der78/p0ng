@@ -190,12 +190,31 @@ struct GameCenterFlags
         if(playerID == GKLocalPlayer.localPlayer().playerID) {
             return;
         }
-    
-        var packet = p0ngPacket();
-    
-        data.getBytes(&packet, length:sizeof(p0ngPacket));
-    
-        Game.sharedInstance.gotPacket(packet);
+        
+        let type:PacketType = decode(data);
+        
+        switch(type)
+        {
+        case .Paddle, .PaddleMove:
+            let packet: PaddlePacket = decode(data);
+            Game.sharedInstance.gotPaddlePacket(type, packet: packet);
+            break;
+        case .Ball:
+            let packet: BallPacket = decode(data);
+            Game.sharedInstance.gotBallPacket(packet);
+            break;
+        case .State:
+            let packet: StatePacket = decode(data);
+            Game.sharedInstance.gotStatePacket(packet);
+            break;
+        case .Ack:
+            Game.sharedInstance.syncState = GameSync.None;
+            break;
+        }
+        
+        if (type.needsAck) {
+            Game.sharedInstance.sendPacket(PacketType.Ack);
+        }
     
     }
     

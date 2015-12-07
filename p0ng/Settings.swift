@@ -37,7 +37,7 @@ struct GamePointIndex
     
 }
 
-@objc class Settings
+@objc class Settings : NSObject
 {
     static let sharedInstance:Settings = Settings();
     
@@ -45,7 +45,7 @@ struct GamePointIndex
 
     private static let ComputerMoveSpeed: Float = 3.5;
     
-    private static let GamePointValues: [UInt] = [ 5, 10, 15, 20 ];
+    private static let GamePointValues: [UInt16] = [ 5, 10, 15, 20 ];
     
     var playSounds:Bool;
     var difficulty:GameDifficulty;
@@ -56,7 +56,7 @@ struct GamePointIndex
     var playerOnLeft:Bool;
     var lagReduction:Bool;
 
-    private init() {
+    private override init() {
         let defaults = NSUserDefaults.standardUserDefaults();
         
         let initialized = defaults.boolForKey("p0nginiialized");
@@ -69,6 +69,8 @@ struct GamePointIndex
         self.playSounds = true;
         self.playerOnLeft = false;
         self.lagReduction = false;
+        
+        super.init();
 
         if(initialized) {
             self.load(defaults);
@@ -128,7 +130,7 @@ struct GamePointIndex
         }
     }
     
-    var gamePoint: UInt {
+    var gamePoint: UInt16 {
         get { return Settings.GamePointValues[self.gamePointIndex]; }
     }
     

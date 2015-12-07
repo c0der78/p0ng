@@ -10,13 +10,26 @@ import Foundation
 import AVFoundation
 import GameKit
 
+
 //! a state in the game
-@objc enum GameState: Int {
+@objc enum GameState: Int16 {
     case Disconnected = -1;
     case Paused;
     case Countdown1, Countdown2, Countdown3;
     case Running;
     case Over;
+    
+    var description : String {
+        switch(self) {
+        case .Disconnected: return "Disconnected";
+        case .Paused: return "Paused";
+        case .Countdown1: return "Countdown1";
+        case .Countdown2: return "Countdown2";
+        case .Countdown3: return "Countdown3";
+        case .Running: return "Running";
+        case .Over: return "Over";
+        }
+    }
 }
 
 //! ball velocity values
@@ -27,7 +40,26 @@ struct BallSpeed {
 
 //! type of network packet
 @objc enum PacketType: UInt8 {
-    case Send, Ack, SendAndAck
+    case State, PaddleMove, Paddle, Ball, Ack;
+    
+    var description : String {
+        switch(self) {
+        case .State: return "State";
+        case .Paddle: return "Paddle";
+        case .PaddleMove: return "PaddleMove";
+        case .Ball: return "Ball";
+        case .Ack: return "Ack";
+        }
+    }
+    
+    var needsAck : Bool {
+        switch(self) {
+        case .Ack, .PaddleMove:
+            return false;
+        default:
+            return true;
+        }
+    }
 }
 
 //! flags on a packet
@@ -37,28 +69,65 @@ struct PacketFlags {
 }
 
 //! a packet
-struct p0ngPacket
+struct StatePacket
 {
-    var ballX: Float;
-    var ballY: Float;
-    var paddleY: Float;
-    var stateAndScores: UInt16;
+    var state: GameState;
+    var playerScore: UInt16;
+    var opponentScore: UInt16;
     var hostingFlags: UInt8;
-    var type: UInt8;
+    
+    init() {
+        self.state = GameState.Paused;
+        self.playerScore = 0;
+        self.opponentScore = 0;
+        self.hostingFlags = 0;
+    }
+};
+
+struct BallPacket
+{
+    var ballX: CGFloat;
+    var ballY: CGFloat;
+    var velocityX: CGFloat;
+    var velocityY: CGFloat;
+    var screenHeight: CGFloat;
+    var screenWidth: CGFloat;
+    var hostingFlags: UInt8;
     
     init() {
         self.ballX = 0;
         self.ballY = 0;
-        self.paddleY = 0;
-        self.stateAndScores = 0;
+        self.velocityX = 0;
+        self.velocityY = 0;
+        self.screenHeight = UIScreen.mainScreen().bounds.height;
+        self.screenWidth = UIScreen.mainScreen().bounds.width;
         self.hostingFlags = 0;
-        self.type = 0;
     }
-}
+
+};
+
+struct PaddlePacket
+{
+    var paddleY: CGFloat;
+    var screenWidth: CGFloat;
+    
+    init() {
+        self.paddleY = 0;
+        self.screenWidth = UIScreen.mainScreen().bounds.width;
+    }
+};
 
 //! network sync type
 @objc enum GameSync: UInt8 {
-    case None, WaitingForAck, HasToAck
+    case None, WaitingForAck;//, HasToAck;
+    
+    var description : String {
+        switch(self) {
+        case .None: return "None";
+        case .WaitingForAck: return "WaitingForAck";
+        //case .HasToAck: return "HasToAck";
+        }
+    }
 }
 
 //! a game protocol
@@ -84,13 +153,29 @@ struct p0ngPacket
 
 }
 
-@objc class Game
+
+func encode<T>(var value: T) -> NSData {
+    return withUnsafePointer(&value) { p in
+        NSData(bytes: p, length: sizeof(T))
+    }
+}
+
+func decode<T>(data: NSData) -> T {
+
+    let pointer = UnsafeMutablePointer<T>.alloc(sizeof(T))
+    
+    data.getBytes(pointer, length: sizeof(T))
+    
+    return pointer.move()
+}
+
+@objc class Game : NSObject
 {
     static let sharedInstance = Game();
     
     // MARK: Private variables
-    private var _playerScore:UInt;
-    private var _opponentScore:UInt;
+    private var _playerScore:UInt16;
+    private var _opponentScore:UInt16;
     
     // MARK: Internal variables
     var randomAILag:NSTimeInterval;
@@ -109,7 +194,7 @@ struct p0ngPacket
     
     // MARK: Initializers
     
-    private init() {
+    private override init() {
         
         self.opponentIsComputer = true;
         
@@ -132,6 +217,8 @@ struct p0ngPacket
         self.interval = 0;
         
         self.playerTurn = false;
+        
+        super.init();
         
         var soundPath:NSURL? =  NSBundle.mainBundle().URLForResource("offthepaddle", withExtension:"wav");
         
@@ -189,7 +276,7 @@ struct p0ngPacket
         }
     }
     
-    var playerScore: UInt {
+    var playerScore: UInt16 {
         
         set(value) {
             self._playerScore = value;
@@ -203,7 +290,7 @@ struct p0ngPacket
         }
     }
     
-    var opponentScore: UInt {
+    var opponentScore: UInt16 {
         set(value) {
             self._opponentScore = value;
             
@@ -258,54 +345,87 @@ struct p0ngPacket
         }
     }
     
+    func createPaddlePacket(data: NSMutableData) {
+        var packet = PaddlePacket();
+        packet.paddleY = self.delegate!.playerPosition.y;
+        data.appendData(encode(packet));
+    }
+    
+    func createStatePacket(data: NSMutableData) {
+        var packet = StatePacket();
+        
+        packet.state = self.state;
+        packet.playerScore = self._playerScore;
+        packet.opponentScore = self._opponentScore;
+        packet.hostingFlags = 0;
+        
+        if(self.playerTurn) {
+            packet.hostingFlags |= PacketFlags.PlayerTurn;
+        }
+        
+        if(Settings.sharedInstance.playerOnLeft) {
+            packet.hostingFlags |= PacketFlags.PlayerOnLeft;
+        }
+        
+        
+        data.appendData(encode(packet));
+    }
+    
+    func createBallPacket(data: NSMutableData) {
+        var packet = BallPacket();
+        
+        packet.velocityY = self.ballVelocity.y;
+        packet.velocityX = self.ballVelocity.x;
+        
+        let position:CGPoint = self.delegate!.ballPosition;
+
+        packet.ballY = position.y;
+        packet.ballX = position.x;
+        
+        if(self.playerTurn) {
+            packet.hostingFlags |= PacketFlags.PlayerTurn;
+        }
+        
+        if(Settings.sharedInstance.playerOnLeft) {
+            packet.hostingFlags |= PacketFlags.PlayerOnLeft;
+        }
+        
+        data.appendData(encode(packet));
+    }
+    
     //! sends a packet to game center
-    func sendPacket( state: PacketType ) {
+    func sendPacket( type: PacketType ) {
         
         if (self.delegate == nil || self.state == GameState.Disconnected || self.opponentIsComputer) {
             return;
         }
         
-        let screenSize:CGSize = UIScreen.mainScreen().bounds.size;
+        let data = NSMutableData();
         
-        let position:CGPoint = self.delegate!.ballPosition;
+        data.appendData(encode(type));
         
-        let ballPos:CGPoint = CGPointMake(screenSize.height-position.x, position.y);
-        
-        var packet:p0ngPacket = p0ngPacket();
-        
-        packet.ballY = Float(ballPos.y);
-        packet.paddleY = Float(self.delegate!.playerPosition.y);
-        
-        packet.stateAndScores = 0;
-        packet.hostingFlags = 0;
-        packet.type = state.rawValue;
-
-        // TODO: test ipad hi res / iphone 6
-        if(UIDevice.currentResolution() == UIDeviceResolution.iPhoneTallerHiRes) {
-            packet.ballX = Float(ballPos.x / (1136.0/960.0));
-        } else {
-            packet.ballX = Float(ballPos.x);
+        switch(type) {
+        case .Ball:
+            self.createBallPacket(data);
+            break;
+        case .Paddle, .PaddleMove:
+            self.createPaddlePacket(data);
+            break;
+        case .State:
+            self.createStatePacket(data);
+            break;
+        default:
+            break;
         }
         
-        packet.stateAndScores = UInt16(self.state.rawValue << 16) | UInt16(self._playerScore << 8) | UInt16(self._opponentScore);
-        
-        if(self.playerTurn) {
-            packet.hostingFlags |= PacketFlags.PlayerTurn;
-        }
-        if(Settings.sharedInstance.playerOnLeft) {
-            packet.hostingFlags |= PacketFlags.PlayerOnLeft;
-        }
-        
-        let data = NSData(bytes:&packet, length:sizeof(p0ngPacket));
-        
-        if(state != PacketType.Send) {
+        if(type.needsAck) {
             GameCenter.sharedInstance.sendReliableData(data);
         } else {
             GameCenter.sharedInstance.sendData(data);
         }
     }
     
-    func broadcast ( ack: Bool) {
+    func broadcast ( type: PacketType) {
         
         if(self.opponentIsComputer) {
             return;
@@ -313,106 +433,107 @@ struct p0ngPacket
         
         if(self.state.rawValue > GameState.Paused.rawValue)
         {
-            if(ack)
-            {
-                if(self.syncState == GameSync.HasToAck)
-                {
-                    NSLog("SENDING ACK %ld", self.interval);
-                    self.syncState = GameSync.None;
-                    self.sendPacket(PacketType.Ack);
-                }
-                else
-                {
-                    NSLog("REQUESTING ACK %ld", self.interval);
-                    self.syncState = GameSync.WaitingForAck;
-                    self.sendPacket(PacketType.SendAndAck);
-                }
-            } else {
-                NSLog("SEND %ld", self.interval);
-                self.sendPacket(self.syncState == GameSync.WaitingForAck ? PacketType.SendAndAck : PacketType.Send);
+            self.sendPacket(type);
+            
+            if (type.needsAck) {
+                NSLog("broadcast: %@", type.description);
+                self.syncState = GameSync.WaitingForAck;
             }
         }
     }
     
-    func gotPacket(packet: p0ngPacket )
+    func gotPaddlePacket(type: PacketType, packet: PaddlePacket)
     {
-        if(packet.type == PacketType.Ack.rawValue)
-        {
-            if(self.syncState == GameSync.WaitingForAck)
-            {
-                self.syncState = GameSync.None;
-            }
-        }
-        else if(packet.type == PacketType.SendAndAck.rawValue)
-        {
-            if(self.syncState == GameSync.WaitingForAck) {
-                NSLog("Sending ack %ld", self.interval);
-                self.sendPacket(PacketType.Ack);
-            }
-            else if(self.syncState == GameSync.None) {
-                self.syncState = GameSync.HasToAck;
-                NSLog("Opponent waiting for ack %ld", self.interval);
-            }
-            return;
-        }
         
-        if(self.syncState == GameSync.WaitingForAck)
-        {
-            NSLog("Updated state from opponent");
-            
+        NSLog("packet: Ball Change");
+        
+        let scalingY = (UIScreen.mainScreen().bounds.width / packet.screenWidth);
+        
+        self.delegate?.setOpponentPaddle(self, withYLocation: packet.paddleY / scalingY);
+        
+        if (type == PacketType.Paddle) {
             self.syncState = GameSync.None;
-            
-            NSLog("GOT ACK %ld", self.interval);
-            
-            let opponentScore = packet.stateAndScores & 0xff;
-            let playerScore = (packet.stateAndScores >> 8) & 0xff;
-            let state = GameState(rawValue: Int(packet.stateAndScores >> 16) & 0xff);
-            
-            if (state != nil) {
-                if(self.state != state)
-                {
-                    NSLog("State Change: %d", state!.rawValue);
-                    
-                    self._playerScore = UInt(opponentScore);
-                    
-                    self._opponentScore = UInt(playerScore);
-                    
-                    if (self.delegate != nil) {
-                        switch(state!)
-                        {
-                            case GameState.Countdown2,
-                                 GameState.Countdown3:
-                                self.delegate!.updateStatus(String(format:"%i", state!.rawValue-1));
-                            break;
-                            case GameState.Running:
-                                self.delegate!.updateStatus(nil);
-                            break;
-                        }
-                    }
-                }
-                
-                self.state = state!;
+        }
+    }
+    
+    func gotStatePacket(packet: StatePacket)
+    {
+    
+        NSLog("packet: State Change: %@", packet.state.description);
+        
+        self._playerScore = packet.opponentScore;
+        
+        self._opponentScore = packet.playerScore;
+        
+        if (self.delegate != nil) {
+            switch(packet.state)
+            {
+            case GameState.Countdown2,
+            GameState.Countdown3:
+                self.delegate!.updateStatus(String(format:"%i", packet.state.rawValue-1));
+                break;
+            case GameState.Running:
+                self.delegate!.updateStatus(nil);
+                break;
+            default:
+                break;
             }
+        }
+        self.state = packet.state;
+        
+        // reset the waiting state
+        self.syncState = GameSync.None;
+        self.playerTurn = (packet.hostingFlags & PacketFlags.PlayerTurn) == 0;
+    }
+    
+    func gotBallPacket(packet: BallPacket )
+    {
+        
+        NSLog("packet: Ball Change");
+    
+        self.playerTurn = (packet.hostingFlags & PacketFlags.PlayerTurn) == 0;
+        
+        let opponentOnLeft = (packet.hostingFlags & PacketFlags.PlayerOnLeft) != 0;
+        
+        let scalingX = (UIScreen.mainScreen().bounds.height / packet.screenHeight);
+        let scalingY = (UIScreen.mainScreen().bounds.width / packet.screenWidth);
+        
+        var ballX = packet.ballX;
+        
+        var ballY = packet.ballY;
+        
+        var velocityX = packet.velocityX;
+        //var velocityY = packet.velocityY;
+        
+        ballX /= scalingX;
+        ballY /= scalingY;
+        
+        if(opponentOnLeft) {
             
-            self.playerTurn = (packet.hostingFlags & PacketFlags.PlayerTurn) == 0;
-            
-            var ballLocation: CGPoint;
-            
-            if( (packet.hostingFlags & PacketFlags.PlayerOnLeft) != 0 && Settings.sharedInstance.playerOnLeft) {
-                ballLocation = CGPointMake(CGFloat(packet.ballX), CGFloat(packet.ballY));
+            if (Settings.sharedInstance.playerOnLeft) {
+                // move opponent to the right
+                ballX = UIScreen.mainScreen().bounds.height - ballX;
+                velocityX = -velocityX;
             }
-            else{
-                ballLocation = CGPointMake(UIScreen.mainScreen().bounds.size.height - CGFloat(packet.ballX), CGFloat(packet.ballY));
-            }
-            
-            self.delegate?.updateGame(self, withBall:ballLocation);
-            
-            if(self.state == GameState.Over) {
-                self.delegate?.gameOver(self);
+        } else {
+            if (!Settings.sharedInstance.playerOnLeft) {
+                // move opponent to left
+                ballX = UIScreen.mainScreen().bounds.height - ballX;
+                velocityX = -velocityX;
             }
         }
         
-        self.delegate?.setOpponentPaddle(self, withYLocation: CGFloat(packet.paddleY));
+        let ballLocation: CGPoint = CGPointMake(ballX, ballY);
+        
+        self.ballVelocity = CGPointMake(velocityX, packet.velocityY);
+        
+        self.delegate?.updateGame(self, withBall:ballLocation);
+        
+        if(self.state == GameState.Over) {
+            self.delegate?.gameOver(self);
+        }
+        
+        self.syncState = GameSync.None;
     }
     
     
@@ -420,6 +541,9 @@ struct p0ngPacket
     
         // if we're not running, or waiting for a network sync...
         if(self.state != GameState.Running || self.syncState != GameSync.None) {
+            if (self.syncState != GameSync.None) {
+                NSLog("Skipping update, waiting for ACK");
+            }
             // just return
             return;
         }
@@ -438,6 +562,7 @@ struct p0ngPacket
             if(settings.playSounds) {
                 self.sndWall.play();
             }
+            self.broadcast(PacketType.Ball);
         }
         
         if (CGRectIntersectsRect (ball.frame, playerPaddle.frame)) {
@@ -449,7 +574,8 @@ struct p0ngPacket
             if(settings.playSounds) {
                 self.sndPaddle.play();
             }
-            self.broadcast(true);
+            NSLog("Player hit ball");
+            self.broadcast(PacketType.Ball);
         }
         
         else if (self.opponentIsComputer && CGRectIntersectsRect (ball.frame, opponentPaddle.frame)) {
@@ -469,13 +595,12 @@ struct p0ngPacket
             if(settings.playSounds) {
                 self.sndPaddle.play();
             }
-        
-            self.broadcast(true);
+            NSLog("Computer hit ball");
         }
-        
+            
         else if(ball.center.x > screenSize.width || ball.center.x < 0) {
             self.ballVelocity.x = -self.ballVelocity.x;
-        
+            broadcast(PacketType.Ball);
         }
         
         // Begin Simple AI
@@ -538,7 +663,7 @@ struct p0ngPacket
         
         if(!isComputer)
         {
-            self.sendPacket(PacketType.Ack);
+            self.sendPacket(PacketType.State);
         }
     }
     
@@ -570,10 +695,7 @@ struct p0ngPacket
             delegate.updateGame(self, withBall:ballLocation);
         }
         
-        if(GameCenter.sharedInstance.isHosting) {
-            self.broadcast(true);
-        }
-    
+        self.broadcast(PacketType.State);
     }
     
     func updatePlayerScore(label: UILabel) {

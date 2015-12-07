@@ -25,7 +25,7 @@ class InsetLabel : UILabel
         super.init(frame: frame);
     }
 
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         self.topInset = 0;
         self.leftInset = 0;
         self.bottomInset = 0;
