@@ -24,12 +24,19 @@ struct GameCenterFlags
     static let Match10 = (1 << 4)
     static let Match15 = (1 << 5)
     static let Match20 = (1 << 6)
+    static let Screen320x480 = (1 << 7)
+    static let Screen320x568 = (1 << 8)
+    static let Screen375x667 = (1 << 9)
+    static let Screen414x736 = (1 << 10)
+    static let Screen768x1024 = (1 << 11)
+    static let Screen1024x1366 = (1 << 12)
 }
 
 
 @objc class GameCenter : NSObject, GKMatchmakerViewControllerDelegate, GKMatchDelegate
 {
     static let sharedInstance = GameCenter();
+    static let ScreenSizes = ["320x480", "320x568", "375x667", "414x736", "768x1024", "1024x1366"];
     
     private(set) var isHosting: Bool;
     
@@ -109,6 +116,37 @@ struct GameCenterFlags
                     break;
                 default:
                     break;
+            }
+            
+            var screenSize = UIScreen.mainScreen().bounds.size;
+            
+            screenSize = CGSizeMake(min(screenSize.width, screenSize.height), max(screenSize.width, screenSize.height));
+
+            
+            let screeSize = String(format: "%dx%d", screenSize.width, screenSize.height)
+
+            
+            switch(GameCenter.ScreenSizes.indexOf(screeSize)!) {
+            case 0:
+                group |= GameCenterFlags.Screen320x480;
+                break;
+            case 1:
+                group |= GameCenterFlags.Screen320x568;
+                break;
+            case 2:
+                group |= GameCenterFlags.Screen375x667;
+                break;
+            case 3:
+                group |= GameCenterFlags.Screen414x736;
+                break;
+            case 4:
+                group |= GameCenterFlags.Screen768x1024;
+                break;
+            case 5:
+                group |= GameCenterFlags.Screen1024x1366;
+                break;
+            default:
+                break;
             }
             
             return group;
