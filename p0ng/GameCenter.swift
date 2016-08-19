@@ -51,7 +51,7 @@ struct GameCenterFlags
         
         let nc = NSNotificationCenter.defaultCenter();
     
-        nc.addObserver(self, selector:Selector("authenticationChanged"),
+        nc.addObserver(self, selector:#selector(GameCenter.authenticationChanged),
             name:GKPlayerAuthenticationDidChangeNotificationName,
             object:nil);
     }
@@ -191,20 +191,20 @@ struct GameCenterFlags
             return;
         }
         
-        let type:PacketType = decode(data);
+        let type = PacketType.decode(data);
         
         switch(type)
         {
         case .Paddle, .PaddleMove:
-            let packet: PaddlePacket = decode(data);
+            let packet = PaddlePacket(data: data);
             Game.sharedInstance.gotPaddlePacket(type, packet: packet);
             break;
         case .Ball:
-            let packet: BallPacket = decode(data);
+            let packet = BallPacket(data: data);
             Game.sharedInstance.gotBallPacket(packet);
             break;
         case .State:
-            let packet: StatePacket = decode(data);
+            let packet = StatePacket(data: data);
             Game.sharedInstance.gotStatePacket(packet);
             break;
         case .Ack:

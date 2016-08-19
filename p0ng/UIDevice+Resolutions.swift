@@ -23,7 +23,7 @@ extension UIDevice {
         let screen = UIScreen.mainScreen();
         
         if(UIDevice.currentDevice().userInterfaceIdiom == .Phone){
-            if (screen.respondsToSelector(Selector("scale"))) {
+            if (screen.respondsToSelector(#selector(NSDecimalNumberBehaviors.scale))) {
                 var result = screen.bounds.size;
                 result = CGSizeMake(result.width * screen.scale, result.height * screen.scale);
                 if (result.height == 480) {
@@ -33,7 +33,7 @@ extension UIDevice {
             } else {
                 return UIDeviceResolution.iPhoneStandardRes;
             }
-        } else if (screen.respondsToSelector(Selector("scale"))) {
+        } else if (screen.respondsToSelector(#selector(NSDecimalNumberBehaviors.scale))) {
             var result = screen.bounds.size;
             result = CGSizeMake(result.width * screen.scale, result.height * screen.scale);
             if (result.height == 1024) {

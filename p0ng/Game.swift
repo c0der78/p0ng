@@ -60,6 +60,32 @@ struct BallSpeed {
             return true;
         }
     }
+    
+    static func decode(data: NSData) -> PacketType {
+        let coding = NSKeyedUnarchiver.unarchiveObjectWithData(data) as! Coding
+        return PacketType(rawValue: coding.type) ?? PacketType.State;
+    }
+    
+    func asData() -> NSData {
+        return NSKeyedArchiver.archivedDataWithRootObject(Coding(self))
+    }
+    
+    class Coding : NSObject, NSCoding {
+        let type: UInt8;
+        
+        init(_ packet: PacketType) {
+            self.type = packet.rawValue;
+        }
+        
+        required init?(coder aDecoder: NSCoder) {
+            self.type = aDecoder.decodeObjectForKey("type")!.unsignedCharValue;
+        }
+        
+        func encodeWithCoder(aCoder: NSCoder) {
+            aCoder.encodeObject(NSNumber( unsignedChar: self.type), forKey: "type");
+        }
+
+    }
 }
 
 //! flags on a packet
@@ -82,6 +108,45 @@ struct StatePacket
         self.opponentScore = 0;
         self.hostingFlags = 0;
     }
+    init(data: NSData) {
+        let coding = NSKeyedUnarchiver.unarchiveObjectWithData(data) as! Coding
+        self.state = coding.state;
+        self.playerScore = coding.playerScore;
+        self.opponentScore = coding.opponentScore;
+        self.hostingFlags = coding.hostingFlags;
+    }
+    
+    func asData() -> NSData {
+        return NSKeyedArchiver.archivedDataWithRootObject(Coding(self))
+    }
+    
+    class Coding: NSObject, NSCoding {
+        let state: GameState;
+        let playerScore: UInt16;
+        let opponentScore: UInt16;
+        let hostingFlags: UInt8;
+        
+        init(_ packet: StatePacket) {
+            self.state = packet.state;
+            self.playerScore = packet.playerScore;
+            self.opponentScore = packet.opponentScore;
+            self.hostingFlags = packet.hostingFlags;
+        }
+        
+        required init?(coder aDecoder: NSCoder) {
+            self.state = GameState(rawValue: aDecoder.decodeObjectForKey("state")!.shortValue) ?? GameState.Disconnected;
+            self.playerScore = aDecoder.decodeObjectForKey("playerScore")!.unsignedShortValue;
+            self.opponentScore = aDecoder.decodeObjectForKey("opponentScore")!.unsignedShortValue;
+            self.hostingFlags = aDecoder.decodeObjectForKey("hostingFlags")!.unsignedCharValue;
+        }
+        
+        func encodeWithCoder(aCoder: NSCoder) {
+            aCoder.encodeObject(NSNumber( short: self.state.rawValue), forKey: "state");
+            aCoder.encodeObject(NSNumber( unsignedShort: self.playerScore), forKey: "playerScore");
+            aCoder.encodeObject(NSNumber( unsignedShort: self.opponentScore), forKey: "opponentScore");
+            aCoder.encodeObject(NSNumber(unsignedChar: self.hostingFlags), forKey: "hostingFlags");
+        }
+    }
 };
 
 struct BallPacket
@@ -103,7 +168,60 @@ struct BallPacket
         self.screenWidth = UIScreen.mainScreen().bounds.width;
         self.hostingFlags = 0;
     }
-
+    init(data: NSData) {
+        let coding = NSKeyedUnarchiver.unarchiveObjectWithData(data) as! Coding
+        self.ballX = coding.ballX;
+        self.ballY = coding.ballY;
+        self.velocityX = coding.velocityX;
+        self.velocityY = coding.velocityY;
+        self.screenHeight = coding.screenHeight;
+        self.screenWidth = coding.screenWidth;
+        self.hostingFlags = coding.hostingFlags;
+    }
+    
+    func asData() -> NSData {
+        return NSKeyedArchiver.archivedDataWithRootObject(Coding(self))
+    }
+    
+    class Coding: NSObject, NSCoding {
+        let ballX: CGFloat;
+        let ballY: CGFloat;
+        let velocityX: CGFloat;
+        let velocityY: CGFloat;
+        let screenHeight: CGFloat;
+        let screenWidth: CGFloat;
+        let hostingFlags: UInt8;
+        
+        init(_ packet: BallPacket) {
+            self.ballX = packet.ballX;
+            self.ballY = packet.ballY;
+            self.velocityY = packet.velocityY;
+            self.velocityX = packet.velocityX;
+            self.screenWidth = packet.screenWidth;
+            self.screenHeight = packet.screenHeight;
+            self.hostingFlags = packet.hostingFlags;
+        }
+        
+        required init?(coder aDecoder: NSCoder) {
+            self.ballX = CGFloat(aDecoder.decodeFloatForKey("ballX"));
+            self.ballY = CGFloat(aDecoder.decodeFloatForKey("ballY"));
+            self.velocityX = CGFloat(aDecoder.decodeFloatForKey("velocityX"));
+            self.velocityY = CGFloat(aDecoder.decodeFloatForKey("velocityY"));
+            self.screenHeight = CGFloat(aDecoder.decodeFloatForKey("screenHeight"));
+            self.screenWidth = CGFloat(aDecoder.decodeFloatForKey("screenWidth"));
+            self.hostingFlags = aDecoder.decodeObjectForKey("hostingFlags")!.unsignedCharValue;
+        }
+        
+        func encodeWithCoder(aCoder: NSCoder) {
+            aCoder.encodeFloat(Float(self.ballX), forKey: "ballX");
+            aCoder.encodeFloat(Float(self.ballY), forKey: "ballY");
+            aCoder.encodeFloat(Float(self.velocityX), forKey: "velocityX");
+            aCoder.encodeFloat(Float(self.velocityY), forKey: "velocityY");
+            aCoder.encodeFloat(Float(self.screenHeight), forKey: "screenHeight");
+            aCoder.encodeFloat(Float(self.screenWidth), forKey: "screenWidth");
+            aCoder.encodeObject(NSNumber(unsignedChar: self.hostingFlags), forKey: "hostingFlags");
+        }
+    }
 };
 
 struct PaddlePacket
@@ -114,6 +232,35 @@ struct PaddlePacket
     init() {
         self.paddleY = 0;
         self.screenWidth = UIScreen.mainScreen().bounds.width;
+    }
+    init(data: NSData) {
+        let coding = NSKeyedUnarchiver.unarchiveObjectWithData(data) as! Coding
+        self.paddleY = coding.paddleY;
+        self.screenWidth = coding.screenWidth;
+    }
+    
+    func asData() -> NSData {
+        return NSKeyedArchiver.archivedDataWithRootObject(Coding(self))
+    }
+    
+    class Coding: NSObject, NSCoding {
+        let paddleY: CGFloat;
+        let screenWidth: CGFloat;
+        
+        init(_ packet: PaddlePacket) {
+            self.paddleY = packet.paddleY;
+            self.screenWidth = packet.screenWidth;
+        }
+        
+        required init?(coder aDecoder: NSCoder) {
+            self.paddleY = CGFloat(aDecoder.decodeFloatForKey("paddleY"));
+            self.screenWidth = CGFloat(aDecoder.decodeFloatForKey("screenWidth"));
+        }
+        
+        func encodeWithCoder(aCoder: NSCoder) {
+            aCoder.encodeFloat(Float(self.paddleY), forKey: "paddleY");
+            aCoder.encodeFloat(Float(self.screenWidth), forKey: "screenWidth");
+        }
     }
 };
 
@@ -151,22 +298,6 @@ struct PaddlePacket
 
     var ballPosition: CGPoint { get };
 
-}
-
-
-func encode<T>(var value: T) -> NSData {
-    return withUnsafePointer(&value) { p in
-        NSData(bytes: p, length: sizeof(T))
-    }
-}
-
-func decode<T>(data: NSData) -> T {
-
-    let pointer = UnsafeMutablePointer<T>.alloc(sizeof(T))
-    
-    data.getBytes(pointer, length: sizeof(T))
-    
-    return pointer.move()
 }
 
 @objc class Game : NSObject
@@ -242,9 +373,9 @@ func decode<T>(data: NSData) -> T {
             }
         }
         
-        self.timer = NSTimer.scheduledTimerWithTimeInterval(Settings.sharedInstance.speed, target:self, selector:Selector("gameLoop:"), userInfo:nil, repeats:true);
+        self.timer = NSTimer.scheduledTimerWithTimeInterval(Settings.sharedInstance.speed, target:self, selector:#selector(Game.gameLoop(_:)), userInfo:nil, repeats:true);
         
-        Settings.addListener(self, selector:Selector("settingsChanged:"));
+        Settings.addListener(self, selector:#selector(Game.settingsChanged(_:)));
     }
     
     // MARK: Dynamic properties
@@ -313,7 +444,7 @@ func decode<T>(data: NSData) -> T {
     
             self.timer.invalidate();
             
-            self.timer = NSTimer.scheduledTimerWithTimeInterval(settings.speed, target:self, selector:Selector("gameLoop:"), userInfo:nil, repeats:true);
+            self.timer = NSTimer.scheduledTimerWithTimeInterval(settings.speed, target:self, selector:#selector(Game.gameLoop(_:)), userInfo:nil, repeats:true);
         }
     
     }
@@ -348,7 +479,7 @@ func decode<T>(data: NSData) -> T {
     func createPaddlePacket(data: NSMutableData) {
         var packet = PaddlePacket();
         packet.paddleY = self.delegate!.playerPosition.y;
-        data.appendData(encode(packet));
+        data.appendData(packet.asData());
     }
     
     func createStatePacket(data: NSMutableData) {
@@ -368,7 +499,7 @@ func decode<T>(data: NSData) -> T {
         }
         
         
-        data.appendData(encode(packet));
+        data.appendData(packet.asData());
     }
     
     func createBallPacket(data: NSMutableData) {
@@ -390,7 +521,7 @@ func decode<T>(data: NSData) -> T {
             packet.hostingFlags |= PacketFlags.PlayerOnLeft;
         }
         
-        data.appendData(encode(packet));
+        data.appendData(packet.asData());
     }
     
     //! sends a packet to game center
@@ -402,7 +533,7 @@ func decode<T>(data: NSData) -> T {
         
         let data = NSMutableData();
         
-        data.appendData(encode(type));
+        data.appendData(type.asData());
         
         switch(type) {
         case .Ball:
@@ -701,7 +832,7 @@ func decode<T>(data: NSData) -> T {
     func updatePlayerScore(label: UILabel) {
         NSLog("Player scored");
         
-        self._playerScore++;
+        self._playerScore += 1;
         
         label.text = String(format:"%d", self._playerScore);
     
@@ -714,7 +845,7 @@ func decode<T>(data: NSData) -> T {
     
     func updateOpponentScore(label: UILabel) {
         NSLog("Opponent scored");
-        self._opponentScore++;
+        self._opponentScore += 1;
         label.text = String(format: "%d", self._opponentScore);
         if(self._opponentScore >= Settings.sharedInstance.gamePoint) {
             self.gameOver(false);
@@ -727,7 +858,7 @@ func decode<T>(data: NSData) -> T {
     
         if(self.state.rawValue > GameState.Paused.rawValue && self.state != GameState.Over) {
         
-            self.interval++;
+            self.interval += 1;
             
             self.delegate?.gameTick(self);
         }

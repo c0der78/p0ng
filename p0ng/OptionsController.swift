@@ -130,7 +130,7 @@ class OptionsController : BaseController
             self.navItem!.titleView!.sizeToFit();
         }
     
-        let backItem = UIBarButtonItem(image: UIImage(named:"leftarrow.white.png"), style:UIBarButtonItemStyle.Plain, target:self, action:Selector("goBack:"));
+        let backItem = UIBarButtonItem(image: UIImage(named:"leftarrow.white.png"), style:UIBarButtonItemStyle.Plain, target:self, action:#selector(OptionsController.goBack(_:)));
     
         self.navItem?.leftBarButtonItem = backItem;
     
