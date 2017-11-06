@@ -1,11 +1,6 @@
-My attempt at some multiplayer pong....
+My attempt at some pong.... went multiplayer too fast in hopes of good value proposition, quickly became unwieldy.
 
-Its current state needs to redoo the networking to use some predictive technology to reduce lag.
-
-
-
-
-
-
-
+TODO:
+- remove multiplayer for now
+- convert multiplayer from game services to bluetooth
 
