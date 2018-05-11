@@ -3,7 +3,7 @@
 //  p0ngTests
 //
 //  Created by Ryan Jennings on 2013-01-08.
-//  Copyright (c) 2013 arg3 software. All rights reserved.
+//  Copyright (c) 2013 Micrantha Software. All rights reserved.
 //
 
 #import "p0ngTests.h"
@@ -12,7 +12,7 @@
 
 - (void)setUp
 {
-    [super setUp];
+    [super setUp]
     
     // Set-up code here.
 }
@@ -21,12 +21,12 @@
 {
     // Tear-down code here.
     
-    [super tearDown];
+    [super tearDown]
 }
 
 - (void)testExample
 {
-    XCTFail(@"Unit tests are not implemented yet in p0ngTests");
+    XCTFail(@"Unit tests are not implemented yet in p0ngTests")
 }
 
 @end

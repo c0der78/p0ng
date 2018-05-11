@@ -3,16 +3,15 @@
 //  p0ng
 //
 //  Created by Ryan Jennings on 2015-07-02.
-//  Copyright © 2015 arg3 software. All rights reserved.
+//  Copyright © 2015 Micrantha Software. All rights reserved.
 //
 
 import Foundation
 import GameKit
 
-@objc
 protocol GameCenterProtocol
 {
-    func matchFound(gameCenter: GameCenter);
+    func matchFound(gameCenter: GameCenter)
 }
 
 struct GameCenterFlags
@@ -35,337 +34,348 @@ struct GameCenterFlags
 
 @objc class GameCenter : NSObject, GKMatchmakerViewControllerDelegate, GKMatchDelegate
 {
-    static let sharedInstance = GameCenter();
-    static let ScreenSizes = ["320x480", "320x568", "375x667", "414x736", "768x1024", "1024x1366"];
+    static let sharedInstance = GameCenter()
+    static let ScreenSizes = ["320x480", "320x568", "375x667", "414x736", "768x1024", "1024x1366"]
     
-    private(set) var isHosting: Bool;
+    private(set) var isHosting: Bool
     
-    var userAuthenticated: Bool;
-    var matchStarted: Bool;
-    var delegate: GameCenterProtocol?;
-    var presentingViewController: UIViewController?;
-    var match: GKMatch?;
-    
+    var userAuthenticated: Bool
+    var matchStarted: Bool
+    var delegate: GameCenterProtocol?
+    var presentingViewController: UIViewController?
+    var match: GKMatch?
     
     private override init() {
         
-        self.isHosting = false;
-        self.matchStarted = false;
-        self.delegate = nil;
-        self.userAuthenticated = false;
+        self.isHosting = false
+        self.matchStarted = false
+        self.delegate = nil
+        self.userAuthenticated = false
         
-        super.init();
+        super.init()
         
-        let nc = NSNotificationCenter.defaultCenter();
+        let nc = NotificationCenter.default
     
         nc.addObserver(self, selector:#selector(GameCenter.authenticationChanged),
-            name:GKPlayerAuthenticationDidChangeNotificationName,
-            object:nil);
+            name: .GKPlayerAuthenticationDidChangeNotificationName,
+            object:nil)
     }
     
-    func authenticationChanged() {
-    
-        if (GKLocalPlayer.localPlayer().authenticated && !self.userAuthenticated) {
-            NSLog("Authentication changed: player authenticated.");
-            self.userAuthenticated = true;
-        } else if (!GKLocalPlayer.localPlayer().authenticated && self.userAuthenticated) {
-            NSLog("Authentication changed: player not authenticated");
-            self.userAuthenticated = false;
+    @objc func authenticationChanged() {
+        if GKLocalPlayer.localPlayer().isAuthenticated && !self.userAuthenticated {
+            NSLog("Authentication changed: player authenticated.")
+            self.userAuthenticated = true
+        } else if !GKLocalPlayer.localPlayer().isAuthenticated && self.userAuthenticated {
+            NSLog("Authentication changed: player not authenticated")
+            self.userAuthenticated = false
         }
-    
     }
     
     func disconnect() {
-
-        self.match?.disconnect();
-    
+        self.match?.disconnect()
     }
     
-    var playerGroup: Int
-    {
+    private func gameSpeedFlags() -> Int {
+        var group:Int = 0
+
+        let settings = Settings.sharedInstance
+        
+        switch settings.speedIndex {
+        case GameSpeed.Fast:
+            group |= GameCenterFlags.Fast
+            break
+        case GameSpeed.Normal:
+            group |= GameCenterFlags.Normal
+            break
+        case GameSpeed.Slow:
+            group |= GameCenterFlags.Slow
+            break
+        }
+        return group
+    }
+    
+    private func gameMatchFlags() -> Int {
+        var group = 0
+        
+        let settings = Settings.sharedInstance
+        
+        switch settings.gamePointIndex {
+        case GamePointIndex.Min:
+            group |= GameCenterFlags.Match5
+            break
+        case GamePointIndex.Min+1:
+            group |= GameCenterFlags.Match10
+            break
+        case GamePointIndex.Max-1:
+            group |= GameCenterFlags.Match15
+            break
+        case GamePointIndex.Max:
+            group |= GameCenterFlags.Match20
+            break
+        default:
+            break
+        }
+        return group
+    }
+    
+    private func gameScreenFlags() -> Int {
+        
+        var group = 0
+        
+        var screenSize = UIScreen.main.bounds.size
+        
+        screenSize = CGSize(width: min(screenSize.width, screenSize.height), height: max(screenSize.width, screenSize.height))
+        
+        let sizeStr = String(format: "%dx%d", screenSize.width, screenSize.height)
+        
+        switch GameCenter.ScreenSizes.index(of: sizeStr) {
+        case 0:
+            group |= GameCenterFlags.Screen320x480
+            break
+        case 1:
+            group |= GameCenterFlags.Screen320x568
+            break
+        case 2:
+            group |= GameCenterFlags.Screen375x667
+            break
+        case 3:
+            group |= GameCenterFlags.Screen414x736
+            break
+        case 4:
+            group |= GameCenterFlags.Screen768x1024
+            break
+        case 5:
+            group |= GameCenterFlags.Screen1024x1366
+            break
+        default:
+            break
+        }
+        return group
+    }
+    
+    var playerGroup: Int {
         get {
-            let settings = Settings.sharedInstance;
+            var group = gameSpeedFlags()
             
-            var group:Int = 0;
+            group |= gameMatchFlags()
             
-            switch(settings.speedIndex) {
-                case GameSpeed.Fast:
-                    group |= GameCenterFlags.Fast;
-                    break;
-                case GameSpeed.Normal:
-                    group |= GameCenterFlags.Normal;
-                    break;
-                case GameSpeed.Slow:
-                    group |= GameCenterFlags.Slow;
-                    break;
-            }
+            group |= gameScreenFlags()
             
-            switch(settings.gamePointIndex)
-            {
-                case GamePointIndex.Min:
-                    group |= GameCenterFlags.Match5;
-                    break;
-                case GamePointIndex.Min+1:
-                    group |= GameCenterFlags.Match10;
-                    break;
-                case GamePointIndex.Max-1:
-                    group |= GameCenterFlags.Match15;
-                    break;
-                case GamePointIndex.Max:
-                    group |= GameCenterFlags.Match20;
-                    break;
-                default:
-                    break;
-            }
-            
-            var screenSize = UIScreen.mainScreen().bounds.size;
-            
-            screenSize = CGSizeMake(min(screenSize.width, screenSize.height), max(screenSize.width, screenSize.height));
-
-            
-            let screeSize = String(format: "%dx%d", screenSize.width, screenSize.height)
-
-            
-            switch(GameCenter.ScreenSizes.indexOf(screeSize)!) {
-            case 0:
-                group |= GameCenterFlags.Screen320x480;
-                break;
-            case 1:
-                group |= GameCenterFlags.Screen320x568;
-                break;
-            case 2:
-                group |= GameCenterFlags.Screen375x667;
-                break;
-            case 3:
-                group |= GameCenterFlags.Screen414x736;
-                break;
-            case 4:
-                group |= GameCenterFlags.Screen768x1024;
-                break;
-            case 5:
-                group |= GameCenterFlags.Screen1024x1366;
-                break;
-            default:
-                break;
-            }
-            
-            return group;
+            return group
         }
     }
     
     func findMatchWithViewController(viewController: UIViewController?) {
         
-        self.matchStarted = false;
-        self.isHosting = false;
-        self.match = nil;
-        self.presentingViewController = viewController;
+        self.matchStarted = false
+        self.isHosting = false
+        self.match = nil
+        self.presentingViewController = viewController
             
-        self.presentingViewController?.dismissViewControllerAnimated(false, completion:nil);
+        self.presentingViewController?.dismiss(animated: false, completion:nil)
         
-        let request = GKMatchRequest();
-        request.minPlayers = 2;
-        request.maxPlayers = 2;
-        request.playerGroup = self.playerGroup;
+        let request = GKMatchRequest()
+        request.minPlayers = 2
+        request.maxPlayers = 2
+        request.playerGroup = self.playerGroup
         
         if let mmvc = GKMatchmakerViewController(matchRequest:request) {
             
-            mmvc.matchmakerDelegate = self;
-            mmvc.modalPresentationStyle = UIModalPresentationStyle.FullScreen;
+            mmvc.matchmakerDelegate = self
+            mmvc.modalPresentationStyle = UIModalPresentationStyle.fullScreen
             
-            NSLog("Finding match on game center...");
+            NSLog("Finding match on game center...")
             
-            self.presentingViewController?.presentViewController(mmvc, animated:true, completion:nil);
+            self.presentingViewController?.present(mmvc, animated:true, completion:nil)
         }
     }
     
-    
     // The user has cancelled matchmaking
-    func matchmakerViewControllerWasCancelled(viewController: GKMatchmakerViewController) {
-        self.presentingViewController?.dismissViewControllerAnimated(true, completion:nil);
-        NSLog("Match was cancelled");
-        self.isHosting = false;
-        self.matchStarted = false;
+    func matchmakerViewControllerWasCancelled(_ matchmakerViewController: GKMatchmakerViewController) {
+        self.presentingViewController?.dismiss(animated: true, completion:nil)
+        NSLog("Match was cancelled")
+        self.isHosting = false
+        self.matchStarted = false
     }
     
     // Matchmaking has failed with an error
-    func matchmakerViewController(viewController: GKMatchmakerViewController, didFailWithError error: NSError) {
-        viewController.dismissViewControllerAnimated(true, completion:nil);
+    func matchmakerViewController(_ viewController: GKMatchmakerViewController, didFailWithError error: Error) {
+        viewController.dismiss(animated: true, completion:nil)
         
-        NSLog("Error %@", error);
-        self.isHosting = false;
-        self.matchStarted = false;
+        NSLog("Error %@", error.localizedDescription)
+        self.isHosting = false
+        self.matchStarted = false
     }
     
     // A peer-to-peer match has been found, the game should start
-    func matchmakerViewController(viewController: GKMatchmakerViewController, didFindMatch theMatch: GKMatch) {
-        viewController.dismissViewControllerAnimated(true, completion:nil);
+    func matchmakerViewController(_ viewController: GKMatchmakerViewController, didFind theMatch: GKMatch) {
+        viewController.dismiss(animated: true, completion:nil)
     
-        self.match = theMatch;
-        theMatch.delegate = self;
-        if (!self.matchStarted && theMatch.expectedPlayerCount == 0) {
-            NSLog("Ready to start match!");
-        
-            let player = GKLocalPlayer.localPlayer();
-            
-            self.isHosting = player.playerID == theMatch.playerIDs[0];
-            
-            NSLog("is Hosting? = %@", self.isHosting ? "YES" : "NO");
-            self.matchStarted = true;
-        
-            self.delegate?.matchFound(self);
-        
-            Game.sharedInstance.newGame(false);
+        if self.matchStarted || theMatch.expectedPlayerCount > 0 {
+            NSLog("Match found, but not ready")
+            return
         }
-        else{
-            NSLog("Match found, but not ready");
-        }
+        
+        self.match = theMatch
+        theMatch.delegate = self
+        
+        NSLog("Ready to start match!")
+    
+        let player = GKLocalPlayer.localPlayer()
+        
+        self.isHosting = player.playerID == theMatch.players[0].playerID
+        
+        NSLog("is Hosting? = %@", self.isHosting ? "YES" : "NO")
+        
+        self.matchStarted = true
+    
+        self.delegate?.matchFound(gameCenter: self)
+    
+        Game.sharedInstance.newGame(isComputer: false)
     }
-        // The match received data sent from the player.
-    func match(theMatch: GKMatch, didReceiveData data: NSData, fromPlayer playerID: String) {
     
-        if (self.match != theMatch) { return; }
+    // The match received data sent from the player.
+    func match(theMatch: GKMatch, didReceiveData data: Data, fromPlayer playerID: String) {
     
-        if(playerID == GKLocalPlayer.localPlayer().playerID) {
-            return;
+        if self.match != theMatch { return; }
+    
+        if playerID == GKLocalPlayer.localPlayer().playerID {
+            return
         }
         
-        let type = PacketType.decode(data);
+        let type = PacketType.decode(data: data)
         
-        switch(type)
-        {
+        switch type {
         case .Paddle, .PaddleMove:
-            let packet = PaddlePacket(data: data);
-            Game.sharedInstance.gotPaddlePacket(type, packet: packet);
-            break;
+            let packet = PaddlePacket(data: data)
+            Game.sharedInstance.gotPaddlePacket(type: type, packet: packet)
+            break
         case .Ball:
-            let packet = BallPacket(data: data);
-            Game.sharedInstance.gotBallPacket(packet);
-            break;
+            let packet = BallPacket(data: data)
+            Game.sharedInstance.gotBallPacket(packet)
+            break
         case .State:
-            let packet = StatePacket(data: data);
-            Game.sharedInstance.gotStatePacket(packet);
-            break;
+            let packet = StatePacket(data: data)
+            Game.sharedInstance.gotStatePacket(packet)
+            break
         case .Ack:
-            Game.sharedInstance.syncState = GameSync.None;
-            break;
+            Game.sharedInstance.syncState = GameSync.None
+            break
         }
         
-        if (type.needsAck) {
-            Game.sharedInstance.sendPacket(PacketType.Ack);
+        if type.needsAck {
+            Game.sharedInstance.sendPacket(type: PacketType.Ack)
         }
-    
     }
     
     
     // The player state changed (eg. connected or disconnected)
     func match(theMatch: GKMatch, player playerID: String, didChangeState state:GKPlayerConnectionState) {
-        if (self.match != theMatch) { return; }
+        if self.match != theMatch { return; }
     
-        switch (state) {
-        case GKPlayerConnectionState.StateConnected:
-            // handle a new player connection.
-            NSLog("Player connected!");
+        switch state {
+        case GKPlayerConnectionState.stateConnected:
             
-            if (!self.matchStarted && theMatch.expectedPlayerCount == 0) {
-                NSLog("Ready to start match!");
-                
-                let player = GKLocalPlayer.localPlayer();
-            
-                self.isHosting = player.playerID == theMatch.playerIDs[0];
-                
-                self.matchStarted = true;
-            
-                self.delegate?.matchFound(self);
-            
-                Game.sharedInstance.newGame(false);
-            } else {
-                NSLog("Match found, but not ready");
+            if self.matchStarted || theMatch.expectedPlayerCount > 0 {
+                NSLog("Match found, but already started")
+                break
             }
             
-            break;
-        case GKPlayerConnectionState.StateDisconnected:
+            // handle a new player connection.
+            NSLog("Player connected, ready to start match!")
+            
+            let player = GKLocalPlayer.localPlayer()
+        
+            self.isHosting = player.playerID == theMatch.players[0].playerID
+            
+            self.matchStarted = true
+        
+            self.delegate?.matchFound(gameCenter: self)
+        
+            Game.sharedInstance.newGame(isComputer: false)
+            
+            break
+            
+        case GKPlayerConnectionState.stateDisconnected:
             // a player just disconnected.
-            NSLog("Player disconnected!");
-            self.matchStarted = false;
-            Game.sharedInstance.gameOver(true);
-            break;
+            NSLog("Player disconnected!")
+            self.matchStarted = false
+            Game.sharedInstance.gameOver(disconnected: true)
+            break
         default:
-            break;
+            break
         }
     }
     
     // The match was unable to connect with the player due to an error.
     func match(theMatch: GKMatch, connectionWithPlayerFailed playerID:String, withError error: NSError) {
         
-        NSLog("Failed to connect to player with error: %@", error);
+        NSLog("Failed to connect to player with error: %@", error)
         
-        if (self.match != theMatch) { return; }
+        if self.match != theMatch { return; }
         
-        self.matchStarted = false;
+        self.matchStarted = false
         
-        Game.sharedInstance.gameOver(true);
+        Game.sharedInstance.gameOver(disconnected: true)
     }
     
     // The match was unable to be established with any players due to an error.
     func match(theMatch: GKMatch, didFailWithError error: NSError?) {
         
-        if (error != nil) {
-            NSLog("Match failed with error: %@", error!);
+        if error != nil {
+            NSLog("Match failed with error: %@", error!)
         }
         
-        if (self.match != theMatch) { return; }
+        if self.match != theMatch { return; }
         
-        self.matchStarted = false;
+        self.matchStarted = false
         
-        Game.sharedInstance.gameOver(true);
+        Game.sharedInstance.gameOver(disconnected: true)
     }
     
-    func sendData(data: NSData)  {
+    func sendData(data: Data)  {
         do {
-            try self.match?.sendDataToAllPlayers(data, withDataMode:GKMatchSendDataMode.Unreliable);
+            try self.match?.sendData(toAllPlayers: data, with:GKMatchSendDataMode.unreliable)
         }
         catch let error as NSError {
-            NSLog("%@", error);
+            NSLog("%@", error)
         }
     }
     
-    func sendReliableData(data: NSData)  {
+    /**
+     * less efficient
+     */
+    func sendReliableData(data: Data)  {
         do {
-            try self.match?.sendDataToAllPlayers(data, withDataMode: GKMatchSendDataMode.Reliable);
+            try self.match?.sendData(toAllPlayers: data, with: GKMatchSendDataMode.reliable)
         }
         catch let error as NSError {
-            NSLog("%@", error);
+            NSLog("%@", error)
         }
     }
     
     func authenticateLocalUser(appDelegate: AppDelegate?, gameCenterDelegate: GameCenterProtocol)  {
         
-        self.delegate = gameCenterDelegate;
+        self.delegate = gameCenterDelegate
         
-        if(self.userAuthenticated)
-        {
-            self.findMatchWithViewController(appDelegate?.window?.rootViewController);
-            return;
+        if self.userAuthenticated {
+            self.findMatchWithViewController(viewController: appDelegate?.window?.rootViewController)
+            return
         }
         
         // Gamekit login for ios 6
-        GKLocalPlayer.localPlayer().authenticateHandler = { (viewcontroller: UIViewController?, error: NSError?) in
-            if (error != nil) {
-                NSLog("authenticateLocalUser: %@", error!);
+        GKLocalPlayer.localPlayer().authenticateHandler = { (viewcontroller: UIViewController?, error: Error?) in
+            if error != nil {
+                NSLog("authenticateLocalUser: %@", error.debugDescription)
             }
             
-            if (viewcontroller != nil) {
-                appDelegate?.window?.rootViewController?.presentViewController(viewcontroller!, animated:true, completion:nil);
+            if viewcontroller != nil {
+                appDelegate?.window?.rootViewController?.present(viewcontroller!, animated:true, completion:nil)
+            } else if GKLocalPlayer.localPlayer().isAuthenticated {
+                self.userAuthenticated = true
+                self.findMatchWithViewController(viewController: appDelegate?.window?.rootViewController)
             }
-                
-            else if (GKLocalPlayer.localPlayer().authenticated)
-            {
-                self.userAuthenticated = true;
-                self.findMatchWithViewController(appDelegate?.window?.rootViewController);
-            }
-        };
-        
+        }
     }
-
 }
 

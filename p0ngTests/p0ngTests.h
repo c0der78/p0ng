@@ -3,7 +3,7 @@
 //  p0ngTests
 //
 //  Created by Ryan Jennings on 2013-01-08.
-//  Copyright (c) 2013 arg3 software. All rights reserved.
+//  Copyright (c) 2013 Micrantha Software. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>

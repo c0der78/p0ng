@@ -3,161 +3,157 @@
 //  p0ng
 //
 //  Created by Ryan Jennings on 2015-07-02.
-//  Copyright © 2015 arg3 software. All rights reserved.
+//  Copyright © 2015 Micrantha Software. All rights reserved.
 //
 
 import UIKit
 
-@objc
-class OptionsController : BaseController
-{
-    @IBOutlet var contentView: UIView?;
-    @IBOutlet var scrollView: UIScrollView?;
-    @IBOutlet var lblMatching: UILabel?;
-    @IBOutlet var lblMatchSpeed: UILabel?;
-    @IBOutlet var lblMatchGamePoint: UILabel?;
-    @IBOutlet var lblAiDifficulty: UILabel?;
-    @IBOutlet var lblSounds: UILabel?;
-    @IBOutlet var lblGamePoint: UILabel?;
-    @IBOutlet var segAiDifficulty: UISegmentedControl?;
-    @IBOutlet var navBar: UINavigationBar?;
-    @IBOutlet var navItem: UINavigationItem?;
-    @IBOutlet var segBallSpeed: UISegmentedControl?;
-    @IBOutlet var lblBallSpeed: UILabel?;
-    @IBOutlet var lblPlayerPosition: UILabel?;
-    @IBOutlet var segPlayerPosition: UISegmentedControl?;
-    @IBOutlet var switchSounds: UISwitch?;
-    @IBOutlet var matchSpeed: UISwitch?;
-    @IBOutlet var matchGamePoint: UISwitch?;
-    @IBOutlet var segNetwork: UISegmentedControl?;
-    @IBOutlet var segGamePoint: UISegmentedControl?;
+@objc class OptionsController : BaseController {
+    @IBOutlet var contentView: UIView?
+    @IBOutlet var scrollView: UIScrollView?
+    @IBOutlet var lblMatching: UILabel?
+    @IBOutlet var lblMatchSpeed: UILabel?
+    @IBOutlet var lblMatchGamePoint: UILabel?
+    @IBOutlet var lblAiDifficulty: UILabel?
+    @IBOutlet var lblSounds: UILabel?
+    @IBOutlet var lblGamePoint: UILabel?
+    @IBOutlet var segAiDifficulty: UISegmentedControl?
+    @IBOutlet var navBar: UINavigationBar?
+    @IBOutlet var navItem: UINavigationItem?
+    @IBOutlet var segBallSpeed: UISegmentedControl?
+    @IBOutlet var lblBallSpeed: UILabel?
+    @IBOutlet var lblPlayerPosition: UILabel?
+    @IBOutlet var segPlayerPosition: UISegmentedControl?
+    @IBOutlet var switchSounds: UISwitch?
+    @IBOutlet var matchSpeed: UISwitch?
+    @IBOutlet var matchGamePoint: UISwitch?
+    @IBOutlet var segNetwork: UISegmentedControl?
+    @IBOutlet var segGamePoint: UISegmentedControl?
     
-    override init(delegate: AppDelegate?, nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?)
-    {
-        super.init(delegate: delegate, nibName: nibNameOrNil, bundle: nibBundleOrNil);
+    override init(delegate: AppDelegate?, nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(delegate: delegate, nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
 
     required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder);
+        super.init(coder: aDecoder)
     }
 
-    @IBAction func goBack(selected: AnyObject) {
-        self.appDelegate?.popViewControllerAnimated(true);
+    @IBAction func goBack(_ selected: AnyObject) {
+        self.appDelegate?.popViewControllerAnimated(animated: true)
     }
     
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated);
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
     
-        let settings = Settings.sharedInstance;
+        let settings = Settings.sharedInstance
     
         if let value = self.segAiDifficulty?.selectedSegmentIndex {
-            let difficulty = GameDifficulty(rawValue: value);
+            let difficulty = GameDifficulty(rawValue: value)
             
-            if (difficulty != nil) {
-                settings.difficulty = difficulty!;
+            if difficulty != nil {
+                settings.difficulty = difficulty!
             }
         }
+        
         if let value = self.segBallSpeed?.selectedSegmentIndex {
-            let speed = GameSpeed(rawValue: value);
+            let speed = GameSpeed(rawValue: value)
             
-            if (speed != nil) {
-                settings.speedIndex = speed!;
+            if speed != nil {
+                settings.speedIndex = speed!
             }
         }
     
-        if let value = self.switchSounds?.on {
-            settings.playSounds = value;
+        if let value = self.switchSounds?.isOn {
+            settings.playSounds = value
         }
     
         if let value = self.segGamePoint?.selectedSegmentIndex {
-            settings.gamePointIndex = value;
+            settings.gamePointIndex = value
         }
     
         if let value = self.segPlayerPosition?.selectedSegmentIndex {
-            let left = (value == 0);
+            let left = (value == 0)
         
-            if(left != settings.playerOnLeft) {
-                Game.sharedInstance.gameOver(true);
+            if left != settings.playerOnLeft {
+                Game.sharedInstance.gameOver(disconnected: true)
             }
         
-            settings.playerOnLeft = left;
+            settings.playerOnLeft = left
         }
     
-        if let value = self.matchGamePoint?.on {
-            settings.matchGamePoint = value;
+        if let value = self.matchGamePoint?.isOn {
+            settings.matchGamePoint = value
         }
     
-        if let value = self.matchSpeed?.on {
-            settings.matchSpeeds = value;
+        if let value = self.matchSpeed?.isOn {
+            settings.matchSpeeds = value
         }
     
         if let value = self.segNetwork?.selectedSegmentIndex {
-            settings.lagReduction = (value == 0);
+            settings.lagReduction = (value == 0)
         }
     
-        settings.save();
+        settings.save()
     }
     
-    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        return UIInterfaceOrientationMask.Portrait;
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return UIInterfaceOrientationMask.portrait
     }
-    override func preferredInterfaceOrientationForPresentation() -> UIInterfaceOrientation {
-        return UIInterfaceOrientation.Portrait;
+    
+    override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
+        return UIInterfaceOrientation.portrait
     }
-    override func shouldAutorotate() -> Bool {
-        return true;
+    
+    override var shouldAutorotate: Bool {
+        return true
     }
     
     override func viewDidLoad()
     {
-        super.viewDidLoad();
+        super.viewDidLoad()
     
-        self.title = "Options";
+        self.title = "Options"
     
-        let label = UILabel(frame:CGRectMake(0, 0, 400, 44));
-        label.backgroundColor = UIColor.clearColor();
-        let font = UIFont(name:"kongtext", size:20.0);
-        if (font != nil) {
-            label.font = font!;
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: 400, height: 44))
+        label.backgroundColor = UIColor.clear
+        let font = UIFont(name:"kongtext", size:20.0)
+        if font != nil {
+            label.font = font!
         }
-        label.shadowColor = UIColor(white:0.0, alpha:0.5);
-        label.textAlignment = NSTextAlignment.Center;
-        label.textColor = UIColor.whiteColor();
-        label.text = self.title;
+        label.shadowColor = UIColor(white:0.0, alpha:0.5)
+        label.textAlignment = NSTextAlignment.center
+        label.textColor = UIColor.white
+        label.text = self.title
         
-        if (self.navItem != nil) {
-            self.navItem!.titleView = label;
-            self.navItem!.titleView!.sizeToFit();
-        }
+        self.navItem?.titleView = label
+        self.navItem?.titleView!.sizeToFit()
     
-        let backItem = UIBarButtonItem(image: UIImage(named:"leftarrow.white.png"), style:UIBarButtonItemStyle.Plain, target:self, action:#selector(OptionsController.goBack(_:)));
+        let backItem = UIBarButtonItem(image: UIImage(named:"leftarrow.white.png"), style:UIBarButtonItemStyle.plain, target:self, action:#selector(goBack(_:)))
     
-        self.navItem?.leftBarButtonItem = backItem;
+        self.navItem?.leftBarButtonItem = backItem
     
-        let settings = Settings.sharedInstance;
+        let settings = Settings.sharedInstance
     
-        self.segAiDifficulty?.selectedSegmentIndex = settings.difficulty.rawValue;
+        self.segAiDifficulty?.selectedSegmentIndex = settings.difficulty.rawValue
         
-        self.segBallSpeed?.selectedSegmentIndex = settings.speedIndex.rawValue;
+        self.segBallSpeed?.selectedSegmentIndex = settings.speedIndex.rawValue
         
-        self.segPlayerPosition?.selectedSegmentIndex = settings.playerOnLeft ? 0 : 1;
+        self.segPlayerPosition?.selectedSegmentIndex = settings.playerOnLeft ? 0 : 1
         
-        self.segGamePoint?.selectedSegmentIndex = settings.gamePointIndex;
+        self.segGamePoint?.selectedSegmentIndex = settings.gamePointIndex
         
-        self.segNetwork?.selectedSegmentIndex = settings.lagReduction ? 0 : 1;
+        self.segNetwork?.selectedSegmentIndex = settings.lagReduction ? 0 : 1
         
-        self.matchGamePoint?.on = settings.matchGamePoint;
+        self.matchGamePoint?.isOn = settings.matchGamePoint
         
-        self.matchSpeed?.on = settings.matchSpeeds;
+        self.matchSpeed?.isOn = settings.matchSpeeds
         
-        self.switchSounds?.on = settings.playSounds;
+        self.switchSounds?.isOn = settings.playSounds
         
         if let content = self.contentView {
-            self.scrollView?.contentSize = content.bounds.size;
-            self.scrollView?.addSubview(content);
+            self.scrollView?.contentSize = content.bounds.size
+            self.scrollView?.addSubview(content)
         }
-    
     }
-
 }
 

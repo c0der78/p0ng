@@ -3,118 +3,106 @@
 //  p0ng
 //
 //  Created by Ryan Jennings on 2015-07-02.
-//  Copyright © 2015 arg3 software. All rights reserved.
+//  Copyright © 2015 Micrantha Software. All rights reserved.
 //
 
 import UIKit
 
-@objc
-class MenuController : BaseController, GameCenterProtocol, UIAlertViewDelegate
+@objc class MenuController : BaseController, GameCenterProtocol, UIAlertViewDelegate
 {
-    @IBOutlet var lblHeader: UILabel?;
-    @IBOutlet var btnPlayComputer: UIButton?;
-    @IBOutlet var btnPlayOnline: UIButton?;
-    @IBOutlet var btnSettings: UIButton?;
-    @IBOutlet var btnContinue: UIButton?;
+    @IBOutlet var lblHeader: UILabel?
+    @IBOutlet var btnPlayComputer: UIButton?
+    @IBOutlet var btnPlayOnline: UIButton?
+    @IBOutlet var btnSettings: UIButton?
+    @IBOutlet var btnContinue: UIButton?
 
-    override init(delegate: AppDelegate?, nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?)
-    {
-        super.init(delegate: delegate, nibName: nibNameOrNil, bundle: nibBundleOrNil);
+    override init(delegate: AppDelegate?, nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(delegate: delegate, nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
 
     required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder);
+        super.init(coder: aDecoder)
     }
 
-    override func viewDidLoad()
-    {
-        super.viewDidLoad();
+    override func viewDidLoad() {
+        super.viewDidLoad()
     
-        self.title = "Home";
+        self.title = "Home"
         
-        var font = UIFont(name:"kongtext", size:64);
+        var font = UIFont(name:"kongtext", size:64)
         
-        if (font != nil) {
-            self.lblHeader?.font = font!;
+        if font != nil {
+            self.lblHeader?.font = font!
         }
         
-        font = UIFont(name:"kongtext", size:20);
+        font = UIFont(name:"kongtext", size:20)
         
-        if (font != nil) {
-            self.btnPlayComputer?.titleLabel?.font = font!;
-            self.btnPlayOnline?.titleLabel?.font = font!;
-            self.btnSettings?.titleLabel?.font = font!;
-            self.btnContinue?.titleLabel?.font = font!;
-        }
-        
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated);
-    
-        if(Game.sharedInstance.state == GameState.Paused) {
-            self.btnContinue?.hidden = false;
-        } else {
-            self.btnContinue?.hidden = true;
+        if font != nil {
+            self.btnPlayComputer?.titleLabel?.font = font!
+            self.btnPlayOnline?.titleLabel?.font = font!
+            self.btnSettings?.titleLabel?.font = font!
+            self.btnContinue?.titleLabel?.font = font!
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
     
-    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        return UIInterfaceOrientationMask.Portrait;
+        self.btnContinue?.isHidden = Game.sharedInstance.state != GameState.Paused
     }
     
-    override func preferredInterfaceOrientationForPresentation () -> UIInterfaceOrientation {
-        return UIInterfaceOrientation.Portrait;
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return UIInterfaceOrientationMask.portrait
     }
     
-    override func shouldAutorotate() -> Bool {
-        return true;
+    override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
+        return UIInterfaceOrientation.portrait
     }
     
-    @IBAction func playComputer(sender: AnyObject) {
-        Game.sharedInstance.state = GameState.Disconnected;
+    override var shouldAutorotate: Bool {
+        return true
+    }
     
-        let viewController = GameController(delegate: self.appDelegate, nibName:"GameController", bundle:nil);
+    @IBAction func playComputer(sender: UIButton) {
+        Game.sharedInstance.state = GameState.Disconnected
     
-        self.appDelegate?.pushViewController(viewController, animated:true);
+        let viewController = GameController(delegate: self.appDelegate, nibName:"GameController", bundle:nil)
+    
+        self.appDelegate?.pushViewController(viewController: viewController, animated:true)
         
-        Game.sharedInstance.newGame(true);
+        Game.sharedInstance.newGame(isComputer: true)
     }
     
-    @IBAction func continueGame(sender: AnyObject) {
-        let viewController = GameController(delegate: self.appDelegate, nibName:"GameController", bundle:nil);
+    @IBAction func continueGame(sender: UIButton) {
+        let viewController = GameController(delegate: self.appDelegate, nibName:"GameController", bundle:nil)
     
-        self.appDelegate?.pushViewController(viewController, animated:true);
+        self.appDelegate?.pushViewController(viewController: viewController, animated:true)
     
-        Game.sharedInstance.state = GameState.Countdown1;
+        Game.sharedInstance.state = GameState.Countdown1
     }
     
-    func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: NSInteger)
-    {
-        if(buttonIndex == 1) {
-            self.showSettings(self);
+    func alertView(_ alertView: UIAlertView, clickedButtonAt buttonIndex: NSInteger) {
+        if buttonIndex == 1 {
+            self.showSettings(sender: self)
         }
     }
     
     @IBAction func playOnline(sender: AnyObject) {
+        Game.sharedInstance.state = GameState.Disconnected
         
-        Game.sharedInstance.state = GameState.Disconnected;
-        
-        GameCenter.sharedInstance.authenticateLocalUser(self.appDelegate, gameCenterDelegate: self);
+        GameCenter.sharedInstance.authenticateLocalUser(appDelegate: self.appDelegate, gameCenterDelegate: self)
     }
     
     func matchFound(gameCenter: GameCenter) {
-        let viewController = GameController(delegate: self.appDelegate, nibName:"GameController", bundle:nil);
+        let viewController = GameController(delegate: self.appDelegate, nibName:"GameController", bundle:nil)
     
-        self.appDelegate?.pushViewController(viewController, animated:true);
+        self.appDelegate?.pushViewController(viewController: viewController, animated:true)
     }
     
     @IBAction func showSettings(sender: AnyObject) {
+        let viewController = OptionsController(delegate: self.appDelegate, nibName:"OptionsController", bundle:nil)
     
-        let viewController = OptionsController(delegate: self.appDelegate, nibName:"OptionsController", bundle:nil);
-    
-        self.appDelegate?.pushViewController(viewController, animated:true);
+        self.appDelegate?.pushViewController(viewController: viewController, animated:true)
     }
 
 }
