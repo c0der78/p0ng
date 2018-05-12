@@ -130,12 +130,12 @@ class GameController : BaseController, GameProtocol
         self.opponentScore?.text = String(format:"%i", game.opponentScore)
         self.opponentScore?.isHidden = false
         
-        // set the ball position
-        self.ball?.center = position
-        
         self.lblStatus?.isHidden = true
         
-        if self.ball != nil {
+        if let ball = self.ball {
+            // set the ball position
+            ball.center = position
+            
             // make some ball velocity
             let ySpeed = CGFloat((UInt32(arc4random_uniform(50)) >= 25) ? BallSpeed.Y : -BallSpeed.Y)
             
@@ -159,7 +159,6 @@ class GameController : BaseController, GameProtocol
         if game.state.rawValue < GameState.Running.rawValue && !game.playerTurn {
             self.ball?.center = paddle.center
         }
-    
     }
     
     //! sets the ball location and scores
@@ -255,6 +254,7 @@ class GameController : BaseController, GameProtocol
     
     //! handle a game over
     func gameOver(_ game: Game) {
+        
         if game.state == GameState.Disconnected {
             self.updateStatus("Disconnected")
         } else if game.playerScore <= game.opponentScore {

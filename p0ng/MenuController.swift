@@ -90,7 +90,8 @@ import UIKit
     @IBAction func playOnline(sender: AnyObject) {
         Game.sharedInstance.state = GameState.Disconnected
         
-        GameCenter.sharedInstance.authenticateLocalUser(appDelegate: self.appDelegate, gameCenterDelegate: self)
+//        GameCenter.sharedInstance.authenticateLocalUser(appDelegate: self.appDelegate, gameCenterDelegate: self)
+        NearbyServiceManager.
     }
     
     func matchFound(gameCenter: GameCenter) {

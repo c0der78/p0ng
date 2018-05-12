@@ -44,6 +44,8 @@
 		94DABDB71B4646F300297833 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DABDB61B4646F300297833 /* AppDelegate.swift */; };
 		94DABDB91B464C2600297833 /* BaseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DABDB81B464C2600297833 /* BaseController.swift */; };
 		94DABDBB1B4651AF00297833 /* UIDevice+Resolutions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DABDBA1B4651AF00297833 /* UIDevice+Resolutions.swift */; };
+		9FEC6D8220A6635A00AD9D97 /* NearbyServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FEC6D8120A6635A00AD9D97 /* NearbyServiceManager.swift */; };
+		9FEC6D8420A663B300AD9D97 /* MultipeerConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FEC6D8320A663B300AD9D97 /* MultipeerConnectivity.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -98,6 +100,8 @@
 		94DABDB61B4646F300297833 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		94DABDB81B464C2600297833 /* BaseController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseController.swift; sourceTree = "<group>"; };
 		94DABDBA1B4651AF00297833 /* UIDevice+Resolutions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIDevice+Resolutions.swift"; sourceTree = "<group>"; };
+		9FEC6D8120A6635A00AD9D97 /* NearbyServiceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyServiceManager.swift; sourceTree = "<group>"; };
+		9FEC6D8320A663B300AD9D97 /* MultipeerConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MultipeerConnectivity.framework; path = System/Library/Frameworks/MultipeerConnectivity.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +109,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FEC6D8420A663B300AD9D97 /* MultipeerConnectivity.framework in Frameworks */,
 				2130B07E16D0DC5B00CB9ABB /* AVFoundation.framework in Frameworks */,
 				210F4F84169D61B3008988FD /* GameKit.framework in Frameworks */,
 				210F4F1C169D39C4008988FD /* UIKit.framework in Frameworks */,
@@ -148,6 +153,7 @@
 		210F4F1A169D39C4008988FD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9FEC6D8320A663B300AD9D97 /* MultipeerConnectivity.framework */,
 				2130B07616D039B900CB9ABB /* AudioToolbox.framework */,
 				210F4F83169D61B3008988FD /* GameKit.framework */,
 				210F4F1B169D39C4008988FD /* UIKit.framework */,
@@ -175,6 +181,7 @@
 				94DABDB61B4646F300297833 /* AppDelegate.swift */,
 				94DABDB81B464C2600297833 /* BaseController.swift */,
 				94DABDBA1B4651AF00297833 /* UIDevice+Resolutions.swift */,
+				9FEC6D8120A6635A00AD9D97 /* NearbyServiceManager.swift */,
 			);
 			path = p0ng;
 			sourceTree = "<group>";
@@ -369,6 +376,7 @@
 				94DABDBB1B4651AF00297833 /* UIDevice+Resolutions.swift in Sources */,
 				94DABDB31B463E6D00297833 /* OptionsController.swift in Sources */,
 				94DABDB51B4644F000297833 /* InsetLabel.swift in Sources */,
+				9FEC6D8220A6635A00AD9D97 /* NearbyServiceManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

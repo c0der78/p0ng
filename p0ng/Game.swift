@@ -642,6 +642,7 @@ class Game : NSObject
         
         // reset the waiting state
         self.syncState = GameSync.None
+        
         self.playerTurn = (packet.hostingFlags & PacketFlags.PlayerTurn) == 0
     }
     
@@ -720,7 +721,7 @@ class Game : NSObject
             self.broadcast(type: PacketType.Ball)
         }
         
-        if ball.frame.contains(playerPaddle.frame) {
+        if playerPaddle.frame.intersects(ball.frame) {
             var frame = ball.frame
             self.calcSpeedBonus(ball: ball, paddle: playerPaddle, margin: 1)
             frame.origin.x = settings.playerOnLeft ? playerPaddle.frame.maxX : (playerPaddle.frame.origin.x - frame.size.height)
@@ -733,8 +734,9 @@ class Game : NSObject
             self.broadcast(type: PacketType.Ball)
         }
         
-        else if self.opponentIsComputer && ball.frame.contains(opponentPaddle.frame) {
+        else if self.opponentIsComputer && opponentPaddle.frame.intersects(ball.frame) {
             var frame = ball.frame
+            
             if settings.difficulty != GameDifficulty.Easy {
                 self.calcSpeedBonus(ball: ball, paddle:opponentPaddle, margin: 0)
             } else {
@@ -760,7 +762,6 @@ class Game : NSObject
         
         // Begin Simple AI
         else if self.opponentIsComputer && (settings.playerOnLeft ? (ball.center.x >= screenSize.width/2) : (ball.center.x <= screenSize.width/2)) {
-        
             if self.randomAILag < self.interval {
                 updateAI(ball: ball, aiPaddle: opponentPaddle, settings: settings, screenSize: screenSize)
             }

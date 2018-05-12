@@ -33,8 +33,6 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         
         self.window?.rootViewController = viewController
         
-        viewController.view.alpha = 1
-        
         if !animated {
             // remove from previous view
             previous?.view.removeFromSuperview()
@@ -42,6 +40,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         }
         
         UIView.animate(withDuration: 0.75, animations:{ () in
+            viewController.view.alpha = 1
             // hide previous view and remove it
             previous?.view.alpha = 0
             previous?.view.removeFromSuperview()
