@@ -245,7 +245,9 @@ class GameController : BaseController, GameViewDelegate, MultiplayerDelegate
         }
         
         // set the status label to the current countdown
-        self.updateStatus(String(format:"%i", game.state.rawValue))
+        if game.state != GameState.Ready {
+            self.updateStatus(String(format:"%i", game.state.rawValue))
+        }
         
         game.state = GameState(rawValue: game.state.rawValue+1) ?? GameState.Disconnected
         

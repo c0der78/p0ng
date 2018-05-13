@@ -37,6 +37,9 @@
 		94B5C54F20A788EA00817D70 /* Packets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B5C52F20A786C300817D70 /* Packets.swift */; };
 		94B5C55020A788EA00817D70 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B5C53020A786C300817D70 /* Settings.swift */; };
 		94B5C55120A788EA00817D70 /* UIDevice+Resolutions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B5C53620A786C300817D70 /* UIDevice+Resolutions.swift */; };
+		94B5C55C20A828FF00817D70 /* offthewall.wav in Resources */ = {isa = PBXBuildFile; fileRef = 94B5C55920A828FE00817D70 /* offthewall.wav */; };
+		94B5C55D20A828FF00817D70 /* offthepaddle.wav in Resources */ = {isa = PBXBuildFile; fileRef = 94B5C55A20A828FE00817D70 /* offthepaddle.wav */; };
+		94B5C55E20A828FF00817D70 /* kongtext.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 94B5C55B20A828FF00817D70 /* kongtext.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -70,6 +73,9 @@
 		94B5C53F20A7872D00817D70 /* OptionsController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OptionsController.xib; sourceTree = "<group>"; };
 		94B5C54120A7878E00817D70 /* BaseAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseAppDelegate.swift; sourceTree = "<group>"; };
 		94B5C54420A788AA00817D70 /* MultipeerConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MultipeerConnectivity.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.3.sdk/System/Library/Frameworks/MultipeerConnectivity.framework; sourceTree = DEVELOPER_DIR; };
+		94B5C55920A828FE00817D70 /* offthewall.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = offthewall.wav; sourceTree = "<group>"; };
+		94B5C55A20A828FE00817D70 /* offthepaddle.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = offthepaddle.wav; sourceTree = "<group>"; };
+		94B5C55B20A828FF00817D70 /* kongtext.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = kongtext.ttf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +107,7 @@
 		94B5C4E020A7833800817D70 = {
 			isa = PBXGroup;
 			children = (
+				94B5C55820A828D100817D70 /* media */,
 				94B5C4E520A7833800817D70 /* shared */,
 				94B5C4F020A7833A00817D70 /* iOS */,
 				94B5C50120A7833A00817D70 /* tvOS */,
@@ -180,6 +187,16 @@
 				94B5C54420A788AA00817D70 /* MultipeerConnectivity.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		94B5C55820A828D100817D70 /* media */ = {
+			isa = PBXGroup;
+			children = (
+				94B5C55B20A828FF00817D70 /* kongtext.ttf */,
+				94B5C55A20A828FE00817D70 /* offthepaddle.wav */,
+				94B5C55920A828FE00817D70 /* offthewall.wav */,
+			);
+			path = media;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -282,7 +299,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				94B5C55C20A828FF00817D70 /* offthewall.wav in Resources */,
+				94B5C55E20A828FF00817D70 /* kongtext.ttf in Resources */,
 				94B5C53C20A7871700817D70 /* MenuController.xib in Resources */,
+				94B5C55D20A828FF00817D70 /* offthepaddle.wav in Resources */,
 				94B5C53E20A7872100817D70 /* GameController.xib in Resources */,
 				94B5C54020A7872D00817D70 /* OptionsController.xib in Resources */,
 				94B5C52120A7833A00817D70 /* Assets.xcassets in Resources */,

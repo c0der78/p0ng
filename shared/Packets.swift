@@ -23,13 +23,13 @@ enum PacketType: UInt8 {
     }
     
     var needsAck : Bool {
-        return false
 //        switch(self) {
 //        case .Ack, .PaddleMove:
 //            return false
 //        default:
 //            return true
 //        }
+        return false
     }
     
     static func decode(_ archive: NSKeyedUnarchiver) -> PacketType? {
@@ -68,14 +68,14 @@ class StatePacket : NSObject, NSCoding
         self.opponentScore = 0
         self.hostingFlags = 0
     }
-    init?(data: Data) {
-        guard let archive = NSKeyedUnarchiver.unarchiveObject(with: data) as? StatePacket else {
+    init?(archive: NSKeyedUnarchiver) {
+        guard let other = archive.decodeObject() as? StatePacket else {
             return nil
         }
-        self.state = archive.state
-        self.playerScore = archive.playerScore
-        self.opponentScore = archive.opponentScore
-        self.hostingFlags = archive.hostingFlags
+        self.state = other.state
+        self.playerScore = other.playerScore
+        self.opponentScore = other.opponentScore
+        self.hostingFlags = other.hostingFlags
     }
     
     required init?(coder decoder: NSCoder) {
@@ -120,17 +120,17 @@ class BallPacket : NSObject, NSCoding
         self.hostingFlags = 0
     }
     
-    init?(data: Data) {
-        guard let archive = NSKeyedUnarchiver.unarchiveObject(with: data) as? BallPacket else {
+    init?(archive: NSKeyedUnarchiver) {
+        guard let other = archive.decodeObject() as? BallPacket else {
             return nil
         }
-        self.ballX = archive.ballX
-        self.ballY = archive.ballY
-        self.velocityX = archive.velocityX
-        self.velocityY = archive.velocityY
-        self.screenHeight = archive.screenHeight
-        self.screenWidth = archive.screenWidth
-        self.hostingFlags = archive.hostingFlags
+        self.ballX = other.ballX
+        self.ballY = other.ballY
+        self.velocityX = other.velocityX
+        self.velocityY = other.velocityY
+        self.screenHeight = other.screenHeight
+        self.screenWidth = other.screenWidth
+        self.hostingFlags = other.hostingFlags
     }
     
     func asData() -> Data {
@@ -172,18 +172,14 @@ class PaddlePacket : NSObject, NSCoding
         self.screenWidth = UIScreen.main.bounds.width
     }
     
-    init?(data: Data) {
-        guard let coding = NSKeyedUnarchiver.unarchiveObject(with: data) as? PaddlePacket else {
+    init?(archive: NSKeyedUnarchiver) {
+        guard let other = archive.decodeObject() as? PaddlePacket else {
             return nil
         }
-        self.paddleY = coding.paddleY
-        self.screenWidth = coding.screenWidth
+        self.paddleY = other.paddleY
+        self.screenWidth = other.screenWidth
     }
     
-    func asData() -> Data {
-        return NSKeyedArchiver.archivedData(withRootObject: self)
-    }
-
     required init?(coder decoder: NSCoder) {
         self.paddleY = CGFloat(decoder.decodeFloat(forKey: "paddleY"))
         self.screenWidth = CGFloat(decoder.decodeFloat(forKey: "screenWidth"))

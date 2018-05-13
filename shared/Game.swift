@@ -15,7 +15,7 @@ import GameKit
 enum GameState: Int16 {
     case Disconnected = -1
     case Paused
-    case Countdown1, Countdown2, Countdown3
+    case Countdown1, Countdown2, Countdown3, Ready
     case Running
     case Over
     
@@ -26,6 +26,7 @@ enum GameState: Int16 {
         case .Countdown1: return "Countdown1"
         case .Countdown2: return "Countdown2"
         case .Countdown3: return "Countdown3"
+        case .Ready: return "Ready"
         case .Running: return "Running"
         case .Over: return "Over"
         }
@@ -335,6 +336,8 @@ class Game : NSObject, MultiplayerDelegate {
         let archive = type.archive()
         
         archive.encode(packet)
+        
+        archive.finishEncoding()
         
         if type.needsAck {
             multiplayer.sendReliable(data: archive.encodedData)

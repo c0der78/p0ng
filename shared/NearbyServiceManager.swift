@@ -114,17 +114,17 @@ class NearbyServiceManager: NSObject, Multiplayer, MCSessionDelegate {
         
         switch type {
         case .Paddle, .PaddleMove:
-            if let packet = PaddlePacket(data: data) {
+            if let packet = PaddlePacket(archive: archive) {
                 Game.shared.gotPaddlePacket(type: type, packet: packet)
             }
             break
         case .Ball:
-            if let packet = BallPacket(data: data) {
+            if let packet = BallPacket(archive: archive) {
                 Game.shared.gotBallPacket(packet)
             }
             break
         case .State:
-            if let packet = StatePacket(data: data) {
+            if let packet = StatePacket(archive: archive) {
                 Game.shared.gotStatePacket(packet)
             }
             break
