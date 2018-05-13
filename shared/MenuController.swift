@@ -65,21 +65,16 @@ import MultipeerConnectivity
     }
     
     @IBAction func playComputer(sender: UIButton) {
-        Game.shared.state = GameState.Disconnected
-    
+        Game.shared.newGame(isComputer: true)
+        
         let viewController = GameController(delegate: self.appDelegate, nibName:"GameController", bundle:nil)
-    
         self.appDelegate?.pushViewController(viewController: viewController, animated:true)
         
-        Game.shared.newGame(isComputer: true)
     }
     
     @IBAction func continueGame(sender: UIButton) {
         let viewController = GameController(delegate: self.appDelegate, nibName:"GameController", bundle:nil)
-    
         self.appDelegate?.pushViewController(viewController: viewController, animated:true)
-    
-        Game.shared.state = GameState.Countdown1
     }
     
     @IBAction func playOnline(sender: AnyObject) {

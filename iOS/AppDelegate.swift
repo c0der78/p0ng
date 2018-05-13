@@ -9,12 +9,8 @@
 import UIKit
 
 @UIApplicationMain
-class AppDelegate : BaseAppDelegate
-{
-    override init() {
-        super.init()
-    }
-    
+class AppDelegate : BaseAppDelegate {
+
     func applicationDidFinishLaunching(_ application: UIApplication) {
 
         self.window = UIWindow(frame: UIScreen.main.bounds)

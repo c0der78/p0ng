@@ -269,7 +269,7 @@ class GameController : BaseController, GameViewDelegate, MultiplayerDelegate
     {
         super.viewDidLoad()
         
-        Game.shared.viewDelegate = self
+        Game.shared.start(self)
     
         var font = UIFont(name:"kongtext", size:24)
         

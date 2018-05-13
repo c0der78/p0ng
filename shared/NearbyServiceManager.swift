@@ -105,7 +105,12 @@ class NearbyServiceManager: NSObject, Multiplayer, MCSessionDelegate {
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         
-        let type = PacketType.decode(data: data)
+        let archive = NSKeyedUnarchiver.init(forReadingWith: data)
+        
+        guard let type = PacketType.decode(archive) else {
+            print("Error: invalid packet type from multiplayer session")
+            return
+        }
         
         switch type {
         case .Paddle, .PaddleMove:
@@ -135,10 +140,15 @@ class NearbyServiceManager: NSObject, Multiplayer, MCSessionDelegate {
 
     // Received a byte stream from remote peer.
     public func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
+        print("got session stream")
     }
     
     // Start receiving a resource from remote peer.
-    public func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {}
+    public func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
+        print("got session resource")
+    }
     
-    public func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {}
+    public func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
+        print("finished session resource")
+    }
 }

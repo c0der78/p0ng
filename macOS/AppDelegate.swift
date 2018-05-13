@@ -8,23 +8,20 @@
 
 import Cocoa
 
-@NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate {
 
-
-
-    func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // Insert code here to initialize your application
+@UIApplicationMain
+class AppDelegate: BaseAppDelegate {
+    
+    func applicationDidFinishLaunching(_ application: UIApplication) {
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        
+        let viewController = MenuController(delegate: self, nibName: "MenuController", bundle:nil)
+        
+        viewController.appDelegate = self
+        
+        self.viewControllers.append(viewController)
+        
+        self.window?.rootViewController = viewController
+        self.window?.makeKeyAndVisible()
     }
-
-    func applicationWillTerminate(_ aNotification: Notification) {
-        // Insert code here to tear down your application
-    }
-
-    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
-        return true
-    }
-
-
 }
-

@@ -83,7 +83,7 @@ class Game : NSObject, MultiplayerDelegate {
     
     // MARK: Members
     var randomAILag:TimeInterval
-    var timer: Timer!
+    var timer: Timer?
     var scale:CGFloat
     var sndWall:AVAudioPlayer!
     var sndPaddle:AVAudioPlayer!
@@ -95,7 +95,7 @@ class Game : NSObject, MultiplayerDelegate {
     var playerTurn:Bool
     var syncState:GameSync
     
-    var viewDelegate: GameViewDelegate?
+    private var viewDelegate: GameViewDelegate?
     
     private lazy var multiplayer: Multiplayer = NearbyServiceManager()
     
@@ -149,9 +149,13 @@ class Game : NSObject, MultiplayerDelegate {
             }
         }
         
-        self.timer = Timer.scheduledTimer(timeInterval: Settings.sharedInstance.speed, target:self, selector:#selector(gameLoopInterval(_:)), userInfo:nil, repeats:true)
-        
         Settings.addListener(self, selector:#selector(settingsChanged(_:)))
+    }
+    
+    func start(_ delegate: GameViewDelegate?) {
+        self.viewDelegate = delegate
+        self.timer = Timer.scheduledTimer(timeInterval: Settings.sharedInstance.speed, target:self, selector:#selector(gameLoopInterval(_:)), userInfo:nil, repeats:true)
+        self.state = GameState.Countdown1
     }
     
     // MARK: Dynamic properties
@@ -220,7 +224,7 @@ class Game : NSObject, MultiplayerDelegate {
             return
         }
     
-        self.timer.invalidate()
+        self.timer?.invalidate()
             
         self.timer = Timer.scheduledTimer(timeInterval: settings.speed, target:self, selector:#selector(gameLoopInterval(_:)), userInfo:nil, repeats:true)
     }
@@ -248,16 +252,16 @@ class Game : NSObject, MultiplayerDelegate {
         print("Speed Bonus!")
     }
     
-    func createPaddlePacket(_ data: inout Data) {
-        var packet = PaddlePacket()
+    func createPaddlePacket() -> PaddlePacket {
+        let packet = PaddlePacket()
         if self.viewDelegate != nil {
             packet.paddleY = self.viewDelegate!.playerPosition.y
         }
-        data.append(packet.asData())
+        return packet
     }
     
-    func createStatePacket(_ data: inout Data) {
-        var packet = StatePacket()
+    func createStatePacket() -> StatePacket {
+        let packet = StatePacket()
         
         packet.state = self.state
         packet.playerScore = self._playerScore
@@ -272,11 +276,11 @@ class Game : NSObject, MultiplayerDelegate {
             packet.hostingFlags |= PacketFlags.PlayerOnLeft
         }
 
-        data.append(packet.asData())
+        return packet
     }
     
-    func createBallPacket(_ data: inout Data) {
-        var packet = BallPacket()
+    func createBallPacket() -> BallPacket {
+        let packet = BallPacket()
         
         packet.velocityY = self.ballVelocity.y
         packet.velocityX = self.ballVelocity.x
@@ -296,7 +300,25 @@ class Game : NSObject, MultiplayerDelegate {
             packet.hostingFlags |= PacketFlags.PlayerOnLeft
         }
         
-        data.append(packet.asData())
+        return packet
+    }
+    
+    func createPacket(type: PacketType) -> Any? {
+    
+        switch type {
+        case .Ball:
+            return self.createBallPacket()
+            
+        case .Paddle, .PaddleMove:
+            return self.createPaddlePacket()
+            
+        case .State:
+            return self.createStatePacket()
+            
+        default:
+            return nil
+        }
+        
     }
     
     //! sends a packet to game center
@@ -306,26 +328,18 @@ class Game : NSObject, MultiplayerDelegate {
             return
         }
         
-        var data = type.asData()
-        
-        switch type {
-        case .Ball:
-            self.createBallPacket(&data)
-            break
-        case .Paddle, .PaddleMove:
-            self.createPaddlePacket(&data)
-            break
-        case .State:
-            self.createStatePacket(&data)
-            break
-        default:
-            break
+        guard let packet = createPacket(type: type) else {
+            return
         }
         
+        let archive = type.archive()
+        
+        archive.encode(packet)
+        
         if type.needsAck {
-            multiplayer.sendReliable(data: data)
+            multiplayer.sendReliable(data: archive.encodedData)
         } else {
-            multiplayer.send(data: data)
+            multiplayer.send(data: archive.encodedData)
         }
     }
     
@@ -349,7 +363,7 @@ class Game : NSObject, MultiplayerDelegate {
     
     func gotPaddlePacket(type: PacketType, packet: PaddlePacket) {
         
-        print("packet: Ball Change")
+        print("packet: paddle Change")
         
         let scalingY = UIScreen.main.bounds.width / packet.screenWidth
         
@@ -585,7 +599,9 @@ class Game : NSObject, MultiplayerDelegate {
     func peerFound(_ multiplayer: Multiplayer, peer: NSObject) {
         switch self.state {
         case .Disconnected,.Over:
+             DispatchQueue.main.async {
                 self.newGame(isComputer: false)
+            }
             
         default:
             print("Got new peer, but already in a game!")
@@ -593,7 +609,9 @@ class Game : NSObject, MultiplayerDelegate {
     }
     
     func peerLost(_ multiplayer: Multiplayer, peer: NSObject) {
-        self.gameOver(disconnected: true)
+         DispatchQueue.main.async {
+            self.gameOver(disconnected: true)
+        }
     }
     
     func resetForPlayer(opponent: Bool) {
